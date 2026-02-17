@@ -55,7 +55,16 @@ echo %CYAN%Installing dependencies (group: %OT_PLATFORM_REQUIREMENTS%)...%RESET%
 echo Executing: uv sync --group %OT_PLATFORM_REQUIREMENTS%
 uv sync --group %OT_PLATFORM_REQUIREMENTS% || call :die "uv sync failed"
 
-rem 3) Check CUDA (if cuda group)
+rem 3) Check tkinter
+echo.
+echo %CYAN%Checking tkinter availability...%RESET%
+uv run python -c "import tkinter" >nul 2>&1
+if errorlevel 1 (
+    call :die "tkinter is not available. Re-run the Python installer and enable 'tcl/tk and IDLE' under Optional Features."
+)
+echo %GRN%tkinter is available.%RESET%
+
+rem 4) Check CUDA (if cuda group)
 if /i "%OT_PLATFORM_REQUIREMENTS%"=="cuda" (
     echo.
     echo %CYAN%Checking CUDA availability...%RESET%
