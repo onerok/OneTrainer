@@ -165,6 +165,36 @@ function sync_environment {
     run_cmd uv sync --group "${group}"
 }
 
+# Checks that tkinter is available in the Python environment.
+function check_tkinter {
+    if ! uv run python -c "import tkinter" 2>/dev/null; then
+        print_error "tkinter is not available in this Python environment."
+        print "tkinter is required for the OneTrainer GUI."
+        print ""
+        case "${OT_HOST_OS}" in
+            Linux)
+                if can_exec apt; then
+                    print "Install it with: sudo apt install python3-tk"
+                elif can_exec dnf; then
+                    print "Install it with: sudo dnf install python3-tkinter"
+                elif can_exec pacman; then
+                    print "Install it with: sudo pacman -S tk"
+                else
+                    print "Install the tkinter package for your distribution."
+                fi
+                ;;
+            Darwin)
+                print "Install it with: brew install python-tk@3.10"
+                print "Or use a python.org installer, which includes tkinter."
+                ;;
+            *)
+                print "Install the tkinter package for your platform."
+                ;;
+        esac
+        exit 1
+    fi
+}
+
 # Runs a Python command within the uv-managed environment.
 function run_python {
     local group="$(get_platform_group)"
@@ -190,6 +220,9 @@ function prepare_runtime_environment {
     if [[ "${should_sync}" == "true" ]]; then
         sync_environment
     fi
+
+    # Verify tkinter is available (required for GUI).
+    check_tkinter
 
     # Write update-check metadata to disk if user has requested "lazy updates",
     # otherwise delete any old, leftover metadata to avoid clutter.
