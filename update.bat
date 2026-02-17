@@ -1,21 +1,36 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+rem --- Generate ESC character for ANSI color codes ---
+for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
+set "RED=%ESC%[31m" & set "YEL=%ESC%[33m" & set "GRN=%ESC%[92m" & set "CYAN=%ESC%[36m" & set "RESET=%ESC%[0m"
+
 REM Avoid footgun by explictly navigating to the directory containing the batch file
 cd /d "%~dp0"
 
 REM Verify that OneTrainer is our current working directory
 if not exist "scripts\train_ui.py" (
-    echo Error: train_ui.py does not exist, you have done something very wrong. Reclone the repository.
-    goto :end
+    echo %RED%Error: train_ui.py does not exist, you have done something very wrong. Reclone the repository.%RESET%
+    goto :end_error
 )
 
-if not defined GIT ( set "GIT=git" )
-if not defined PYTHON ( set "PYTHON=python" )
-if not defined VENV_DIR ( set "VENV_DIR=%~dp0venv" )
+if not defined OT_PLATFORM_REQUIREMENTS (set "OT_PLATFORM_REQUIREMENTS=cuda")
+if not defined GIT (set "GIT=git")
+
+rem --- Normalize legacy file-based values ---
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-cuda.txt" (set "OT_PLATFORM_REQUIREMENTS=cuda")
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-rocm.txt" (set "OT_PLATFORM_REQUIREMENTS=rocm")
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-default.txt" (set "OT_PLATFORM_REQUIREMENTS=cpu")
+
+rem --- Check for uv ---
+where uv >nul 2>&1
+if errorlevel 1 (
+    echo %RED%uv is not installed. Please run install.bat first or install uv manually.%RESET%
+    goto :end_error
+)
 
 :git_pull
-echo Checking repository and branch information...
+echo %CYAN%Checking repository and branch information...%RESET%
 
 REM Get current branch name
 FOR /F "tokens=* USEBACKQ" %%F IN (`"%GIT%" rev-parse --abbrev-ref HEAD`) DO (
@@ -71,7 +86,7 @@ if not defined tracking_info (
     echo Fetching updates...
     "%GIT%" fetch !tracking_remote!
     if errorlevel 1 (
-        echo Error: Could not fetch updates
+        echo %RED%Error: Could not fetch updates%RESET%
         goto :end_error
     )
 
@@ -87,82 +102,34 @@ if not defined tracking_info (
         echo Updates available, pulling changes...
         "%GIT%" pull
         if errorlevel 1 (
-            echo Error: Git pull failed.
+            echo %RED%Error: Git pull failed.%RESET%
             goto :end_error
         )
     )
 )
 
-goto :check_venv
-
-:check_venv
-dir "%VENV_DIR%" >NUL 2>NUL
-if errorlevel 1 (
-    echo Error: Virtual environment not found, please run install.bat first
-    goto :end_error
-) else (
-    goto :activate_venv
-)
-
-:activate_venv
-echo Activating virtual environment: %VENV_DIR%
-set "PYTHON=%VENV_DIR%\Scripts\python.exe"
-goto :check_python_version
-
-:check_python_version
-echo Checking Python version...
-"%PYTHON%" --version
-if errorlevel 1 (
-    echo Error: Failed to get Python version
-    goto :end_error
-)
-
+rem --- Sync environment ---
 echo.
-"%PYTHON%" "%~dp0scripts\util\version_check.py" 3.10 3.13 2>&1
+echo %CYAN%Syncing dependencies (group: %OT_PLATFORM_REQUIREMENTS%)...%RESET%
+echo Executing: uv sync --group %OT_PLATFORM_REQUIREMENTS%
+uv sync --group %OT_PLATFORM_REQUIREMENTS%
 if errorlevel 1 (
-    echo.
-    goto :wrong_python_version
-)
-goto :install_dependencies
-
-:install_dependencies
-echo Installing dependencies...
-echo Upgrading pip and setuptools...
-"%PYTHON%" -m pip install --upgrade --upgrade-strategy eager pip setuptools==81.0.0
-if errorlevel 1 (
-    echo Error: pip upgrade failed.
-    goto :end_error
-)
-
-echo Installing requirements (this may take a while)...
-"%PYTHON%" -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
-if errorlevel 1 (
-    echo Error: Installing requirements failed.
+    echo %RED%Error: uv sync failed.%RESET%
     goto :end_error
 )
 
 :end_success
 echo.
-echo ***********
-echo Update done
-echo ***********
-goto :end
-
-:wrong_python_version
-echo.
-echo Please install a supported Python version from:
-echo https://www.python.org/downloads/windows/
-echo.
-echo Reminder: Do not rely on installation videos; they are often out of date.
-goto :end_error
+echo %GRN%***********%RESET%
+echo %GRN%Update done%RESET%
+echo %GRN%***********%RESET%
+pause
+exit /b 0
 
 :end_error
 echo.
-echo *******************
-echo Error during update
-echo *******************
-goto :end
-
-:end
+echo %RED%*******************%RESET%
+echo %RED%Error during update%RESET%
+echo %RED%*******************%RESET%
 pause
-exit /b %errorlevel%
+exit /b 1
