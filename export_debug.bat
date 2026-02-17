@@ -6,31 +6,41 @@ cd /d "%~dp0"
 REM Verify that OneTrainer is our current working directory
 if not exist "scripts\train_ui.py" (
     echo Error: train_ui.py does not exist, you have done something very wrong. Reclone the repository.
-    goto :end
+    goto :end_error
 )
 
-if not defined PYTHON (set PYTHON=python)
-if not defined VENV_DIR (set "VENV_DIR=%~dp0venv")
+if not defined OT_PLATFORM_REQUIREMENTS (set "OT_PLATFORM_REQUIREMENTS=cuda")
 
-:check_venv
-dir "%VENV_DIR%" >NUL 2>NUL
-if not errorlevel 1 goto :activate_venv
-echo venv not found, please run install.bat first
-goto :end
+rem --- Normalize legacy file-based values ---
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-cuda.txt" (set "OT_PLATFORM_REQUIREMENTS=cuda")
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-rocm.txt" (set "OT_PLATFORM_REQUIREMENTS=rocm")
+if /i "%OT_PLATFORM_REQUIREMENTS%"=="requirements-default.txt" (set "OT_PLATFORM_REQUIREMENTS=cpu")
 
-:activate_venv
-echo activating venv %VENV_DIR%
-set PYTHON="%VENV_DIR%\Scripts\python.exe" -X utf8
-echo Using Python %PYTHON%
+REM Check for uv
+where uv >nul 2>&1
+if errorlevel 1 (
+    echo Error: uv is not installed. Please run install.bat first or install uv manually.
+    goto :end_error
+)
+
+REM Force UTF-8 mode for Python
+set "PYTHONUTF8=1"
 
 :launch
 echo Generating debug report...
-%PYTHON% scripts\generate_debug_report.py
+uv run --group %OT_PLATFORM_REQUIREMENTS% python scripts\generate_debug_report.py
 if errorlevel 1 (
     echo Error: Debug report generation failed with code %ERRORLEVEL%
+    pause
+    exit /b 1
 ) else (
     echo Now upload the debug report to your Github issue or post in Discord.
 )
 
 :end
 pause
+exit /b 0
+
+:end_error
+pause
+exit /b 1

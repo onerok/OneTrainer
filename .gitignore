@@ -24,7 +24,6 @@ secrets.json
 /.venv*
 /venv*
 /conda_env*
-.python-version
 *.egg-info
 
 # pixi environments
