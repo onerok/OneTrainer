@@ -93,3 +93,21 @@ presets:
 # Generate a debug report
 debug-report:
     ./run-cmd.sh generate_debug_report
+
+# Run web API + web UI in one tmux session (detach with Ctrl-b d)
+web-tmux session="onetrainer-web":
+    @if ! command -v tmux >/dev/null 2>&1; then \
+        echo "tmux is required but not installed."; \
+        exit 1; \
+    fi
+    @if tmux has-session -t {{session}} 2>/dev/null; then \
+        echo "Attaching to existing tmux session: {{session}}"; \
+        tmux attach -t {{session}}; \
+    else \
+        tmux new-session -d -s {{session}} -n dev "cd apps/api && uv sync && uv run uvicorn app.main:app --reload --port 8011"; \
+        tmux split-window -h -t {{session}}:dev "cd apps/web && npm install && npm run dev"; \
+        tmux set-option -t {{session}}:dev remain-on-exit on; \
+        tmux select-layout -t {{session}}:dev even-horizontal; \
+        echo "Created tmux session: {{session}}"; \
+        tmux attach -t {{session}}; \
+    fi
