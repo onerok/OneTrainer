@@ -731,3 +731,15 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Frontend feature extraction: General)
+
+### Implemented in this session (Refactor Step 4 continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/general/GeneralTab.svelte` and moved General tab rendering there.
+  - Updated `apps/web/src/app/AppShell.svelte` to render `GeneralTab` while preserving existing handlers and state.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
