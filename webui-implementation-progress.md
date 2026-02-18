@@ -581,3 +581,22 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, LoRA mapper/service split)
+
+### Implemented in this session (Refactor Step 3 continuation)
+- Backend (`apps/api`):
+  - Added `apps/api/app/mappers/lora.py` and moved LoRA tab mapping logic (`to_lora_settings`, `apply_lora_settings`).
+  - Added `apps/api/app/services/lora_service.py` and moved LoRA tab orchestration (`load -> map -> meta`, `apply -> save -> map -> meta`).
+  - Updated `apps/api/app/routes/lora.py` to thin route handlers that delegate to service functions.
+- API contract stability:
+  - Preserved endpoint path and response shape for `GET/POST /api/v1/lora-config`.
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
