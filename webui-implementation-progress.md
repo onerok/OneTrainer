@@ -600,3 +600,25 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Data and Backup mapper/service split)
+
+### Implemented in this session (Refactor Step 3 continuation)
+- Backend (`apps/api`):
+  - Added `apps/api/app/mappers/data.py` and `apps/api/app/services/data_service.py`.
+  - Updated `apps/api/app/routes/data.py` to thin route handlers.
+  - Added `apps/api/app/mappers/backup.py` and `apps/api/app/services/backup_service.py`.
+  - Updated `apps/api/app/routes/backup.py` to thin route handlers.
+- API contract stability:
+  - Preserved endpoint paths and response shapes for:
+    - `GET/POST /api/v1/data-config`
+    - `GET/POST /api/v1/backup-config`
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
