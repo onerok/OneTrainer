@@ -707,3 +707,15 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Frontend feature extraction: LoRA)
+
+### Implemented in this session (Refactor Step 4 continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/lora/LoraTab.svelte` and moved LoRA tab rendering there.
+  - Updated `apps/web/src/app/AppShell.svelte` to render `LoraTab` while preserving existing handlers and state.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
