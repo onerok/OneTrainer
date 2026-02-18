@@ -40,6 +40,8 @@
   import Select from '../lib/components/ui/Select.svelte';
   import Switch from '../lib/components/ui/Switch.svelte';
   import Tabs from '../lib/components/ui/Tabs.svelte';
+  import DataTab from '../features/data/DataTab.svelte';
+  import ToolsTab from '../features/tools/ToolsTab.svelte';
 
   let activeTab = 'general';
 
@@ -1144,32 +1146,7 @@
         </div>
       </form>
     {:else if activeTab === 'data' && dataForm}
-      <form class="general-form" on:submit={onSubmitData}>
-        <div class="field-grid">
-          <div class="field-row switch-row full-width">
-            <Label forId="aspect_ratio_bucketing">Aspect Ratio Bucketing</Label>
-            <Switch name="aspect_ratio_bucketing" bind:checked={dataForm.aspect_ratio_bucketing} />
-          </div>
-
-          <div class="field-row switch-row full-width">
-            <Label forId="latent_caching">Latent Caching</Label>
-            <Switch name="latent_caching" bind:checked={dataForm.latent_caching} />
-          </div>
-
-          <div class="field-row switch-row full-width">
-            <Label forId="clear_cache_before_training">Clear cache before training</Label>
-            <Switch
-              name="clear_cache_before_training"
-              bind:checked={dataForm.clear_cache_before_training}
-            />
-          </div>
-        </div>
-
-        <div class="action-row">
-          <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Data Settings'}</Button>
-          <Button type="button" disabled={saving} on:click={loadDataConfig}>Reload</Button>
-        </div>
-      </form>
+      <DataTab {dataForm} {saving} onSubmit={onSubmitData} onReload={loadDataConfig} />
     {:else if activeTab === 'sampling' && samplingForm}
       <form class="general-form" on:submit={onSubmitSampling}>
         <div class="field-grid">
@@ -1347,27 +1324,7 @@
         </div>
       </form>
     {:else if activeTab === 'tools'}
-      <div class="general-form">
-        <div class="field-grid">
-          {#each toolsList as tool}
-            <div class="field-row full-width">
-              <div class="concept-header">
-                <strong>{tool.name}</strong>
-                <Button type="button" on:click={() => onToolAction(tool)}>
-                  {tool.action_type === 'WEB_LINK' ? 'Open' : tool.action_type === 'CLI_COMMAND' ? 'Copy Command' : 'Show Info'}
-                </Button>
-              </div>
-              <p class="muted">{tool.description}</p>
-              {#if tool.action_type !== 'WEB_LINK'}
-                <p><code>{tool.action_value}</code></p>
-              {/if}
-            </div>
-          {/each}
-        </div>
-        <div class="action-row">
-          <Button type="button" disabled={saving} on:click={loadToolsConfig}>Reload</Button>
-        </div>
-      </div>
+      <ToolsTab {toolsList} {saving} onReload={loadToolsConfig} {onToolAction} />
     {:else if activeTab === 'training' && trainingForm}
       <form class="general-form" on:submit={onSubmitTraining}>
         <div class="field-grid">

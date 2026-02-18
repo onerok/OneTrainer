@@ -682,3 +682,16 @@ Last updated: 2026-02-18
   - `npm --prefix apps/web run build`
 - Backend compile check:
   - `python -m compileall apps/api/app`
+
+## Session Update (2026-02-18, Frontend feature extraction: Tools and Data)
+
+### Implemented in this session (Refactor Step 4 continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/tools/ToolsTab.svelte` and moved Tools tab rendering there.
+  - Added `apps/web/src/features/data/DataTab.svelte` and moved Data tab rendering there.
+  - Updated `apps/web/src/app/AppShell.svelte` to render extracted feature components while keeping existing state/loading/saving logic unchanged.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
