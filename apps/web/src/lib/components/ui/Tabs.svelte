@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { TAB_ROUTES, type AppRoute } from '../../../app/routes';
+  import { TAB_ROUTES, type AppRoute, type TabId } from '../../../app/routes';
 
-  export let activeTab = 'general';
+  export let activeTab: TabId = 'general';
   export let tabs: AppRoute[] = TAB_ROUTES;
-  const dispatch = createEventDispatcher<{ change: { tabId: string } }>();
+  const dispatch = createEventDispatcher<{ change: { tabId: TabId } }>();
 
-  function onTabClick(tabId: string, disabled: boolean) {
+  function onTabClick(tabId: TabId, disabled: boolean) {
     if (disabled) {
       return;
     }

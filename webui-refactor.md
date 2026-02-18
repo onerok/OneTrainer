@@ -114,3 +114,49 @@ Refactor the WebUI/API architecture to vertical slices with minimal churn, while
 2. PR2: Backend route/store extraction, zero behavior change.
 3. PR3+: One tab per PR full slice (`route + service + mapper + feature component + resource helper adoption`).
 4. Final PR: lazy loading and legacy cleanup.
+
+## Remaining Work Checklist (2026-02-18)
+
+### Step 6: Per-Tab State Isolation
+- [x] Replace global `loading/saving/error/status` in `apps/web/src/app/AppShell.svelte` with per-feature flags/state.
+- [x] Keep lazy-load-on-first-activation behavior while moving load/save state ownership to each feature.
+
+### Frontend Vertical-Slice Ownership
+- [x] Move per-tab load/save orchestration out of `apps/web/src/app/AppShell.svelte` into per-feature modules.
+- [x] Extract `General` load/save orchestration to `apps/web/src/features/general/state.ts`.
+- [x] Extract `Model` load/save orchestration to `apps/web/src/features/model/state.ts`.
+- [x] Extract `LoRA` load/save orchestration to `apps/web/src/features/lora/state.ts`.
+- [x] Extract `Data` load/save orchestration to `apps/web/src/features/data/state.ts`.
+- [x] Extract `Training` load/save orchestration to `apps/web/src/features/training/state.ts`.
+- [x] Extract `Sampling` load/save orchestration to `apps/web/src/features/sampling/state.ts`.
+- [x] Extract `Backup` load/save orchestration to `apps/web/src/features/backup/state.ts`.
+- [x] Extract `Concepts` load/save orchestration to `apps/web/src/features/concepts/state.ts`.
+- [x] Extract `Tools` load orchestration to `apps/web/src/features/tools/state.ts`.
+- [x] Add `features/<tab>/state.ts` for each tab.
+- [x] Add `features/<tab>/adapter.ts` where UI-only shaping/conversion is needed.
+
+### Frontend Shared Layer Alignment
+- [x] Introduce `apps/web/src/shared/api/http.ts` as base fetch/error wrapper ownership point.
+- [x] Introduce `apps/web/src/shared/state/ui.ts` for global non-tab UI state.
+- [x] Decide whether to keep `src/lib` naming as compatibility layer or complete move to `src/shared` (keep `src/lib` as compatibility layer for generated client and existing imports for now).
+
+### Backend Schema Modularization
+- [x] Split `apps/api/app/schemas.py` into `apps/api/app/schemas/` modules:
+- [x] `common.py`
+- [x] `general.py`
+- [x] `model.py`
+- [x] `lora.py`
+- [x] `data.py`
+- [x] `training.py`
+- [x] `sampling.py`
+- [x] `backup.py`
+- [x] `concepts.py`
+- [x] `tools.py`
+
+### Final Cleanup (Step 7)
+- [x] Remove any dead/legacy compatibility code after state ownership migration.
+- [x] Reconcile stale entries in `webui-implementation-progress.md` so top-level TODO/known-issue sections match latest session updates.
+- [x] Ensure `apps/api/README.md` and `apps/web/README.md` reflect final architecture paths and ownership.
+
+### Validation Automation
+- [x] Add a lightweight automated Playwright smoke script for baseline save/reload regression checks.

@@ -1,24 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import {
-    fetchBackupConfig,
-    fetchConceptsConfig,
-    fetchDataConfig,
-    fetchGeneralConfig,
-    fetchLoraConfig,
-    fetchModelConfig,
-    fetchSamplingConfig,
-    fetchTrainingConfig,
-    fetchToolsConfig,
-    saveBackupConfig,
-    saveConceptsConfig,
-    saveDataConfig,
-    saveGeneralConfig,
-    saveLoraConfig,
-    saveModelConfig,
-    saveSamplingConfig,
-    saveTrainingConfig
-  } from '../lib/api/client';
   import type {
     BackupSettings,
     BalancingStrategyValue,
@@ -33,20 +14,30 @@
     ToolInfo,
     TrainingSettings
   } from '../lib/api/types';
-  import Button from '../lib/components/ui/Button.svelte';
   import Card from '../lib/components/ui/Card.svelte';
   import Tabs from '../lib/components/ui/Tabs.svelte';
   import BackupTab from '../features/backup/BackupTab.svelte';
+  import { loadBackupState, saveBackupState } from '../features/backup/state';
   import ConceptsTab from '../features/concepts/ConceptsTab.svelte';
+  import { loadConceptsState, saveConceptsState } from '../features/concepts/state';
   import DataTab from '../features/data/DataTab.svelte';
+  import { loadDataState, saveDataState } from '../features/data/state';
   import GeneralTab from '../features/general/GeneralTab.svelte';
+  import { loadGeneralState, saveGeneralState } from '../features/general/state';
   import LoraTab from '../features/lora/LoraTab.svelte';
+  import { loadLoraState, saveLoraState } from '../features/lora/state';
   import ModelTab from '../features/model/ModelTab.svelte';
+  import { loadModelState, saveModelState } from '../features/model/state';
   import SamplingTab from '../features/sampling/SamplingTab.svelte';
+  import { loadSamplingState, saveSamplingState } from '../features/sampling/state';
   import TrainingTab from '../features/training/TrainingTab.svelte';
+  import { loadTrainingState, saveTrainingState } from '../features/training/state';
   import ToolsTab from '../features/tools/ToolsTab.svelte';
+  import { loadToolsState } from '../features/tools/state';
+  import { createTabBooleanState, createTabStringState } from '../shared/state/ui';
+  import type { TabId } from './routes';
 
-  let activeTab = 'general';
+  let activeTab: TabId = 'general';
 
   let generalForm: GeneralSettings | null = null;
   let validateAfterUnits: string[] = [];
@@ -94,215 +85,289 @@
   let balancingStrategies: string[] = [];
   let promptSources: string[] = [];
 
+  let loadedByTab = createTabBooleanState(false);
+  let loadingByTab = createTabBooleanState(false);
+  let savingByTab = createTabBooleanState(false);
+  let statusByTab = createTabStringState('');
+  let errorByTab = createTabStringState('');
   let loading = true;
   let saving = false;
   let statusMessage = '';
   let errorMessage = '';
 
+  loadingByTab = { ...loadingByTab, [activeTab]: true };
+
+  $: loading = loadingByTab[activeTab];
+  $: saving = savingByTab[activeTab];
+  $: statusMessage = statusByTab[activeTab];
+  $: errorMessage = errorByTab[activeTab];
+
+  function setTabLoading(tabId: TabId, value: boolean) {
+    loadingByTab = { ...loadingByTab, [tabId]: value };
+  }
+
+  function setTabSaving(tabId: TabId, value: boolean) {
+    savingByTab = { ...savingByTab, [tabId]: value };
+  }
+
+  function setTabStatusMessage(tabId: TabId, value: string) {
+    statusByTab = { ...statusByTab, [tabId]: value };
+  }
+
+  function setTabErrorMessage(tabId: TabId, value: string) {
+    errorByTab = { ...errorByTab, [tabId]: value };
+  }
+
+  function markTabLoaded(tabId: TabId) {
+    loadedByTab = { ...loadedByTab, [tabId]: true };
+  }
+
+  function loadStateSetters(tabId: TabId) {
+    return {
+      setLoading: (value: boolean) => setTabLoading(tabId, value),
+      setErrorMessage: (value: string) => setTabErrorMessage(tabId, value),
+      setStatusMessage: (value: string) => setTabStatusMessage(tabId, value)
+    };
+  }
+
+  function saveStateSetters(tabId: TabId) {
+    return {
+      setSaving: (value: boolean) => setTabSaving(tabId, value),
+      setErrorMessage: (value: string) => setTabErrorMessage(tabId, value),
+      setStatusMessage: (value: string) => setTabStatusMessage(tabId, value)
+    };
+  }
+
   onMount(async () => {
     await ensureTabLoaded(activeTab);
   });
 
-  async function ensureTabLoaded(tabId: string) {
-    if (tabId === 'general' && !generalForm) {
+  async function ensureTabLoaded(tabId: TabId) {
+    if (loadedByTab[tabId]) {
+      return;
+    }
+
+    if (tabId === 'general') {
       await loadGeneralConfig();
       return;
     }
-    if (tabId === 'model' && !modelForm) {
+    if (tabId === 'model') {
       await loadModelConfig();
       return;
     }
-    if (tabId === 'lora' && !loraForm) {
+    if (tabId === 'lora') {
       await loadLoraConfig();
       return;
     }
-    if (tabId === 'data' && !dataForm) {
+    if (tabId === 'data') {
       await loadDataConfig();
       return;
     }
-    if (tabId === 'backup' && !backupForm) {
+    if (tabId === 'backup') {
       await loadBackupConfig();
       return;
     }
-    if (tabId === 'sampling' && !samplingForm) {
+    if (tabId === 'sampling') {
       await loadSamplingConfig();
       return;
     }
-    if (tabId === 'training' && !trainingForm) {
+    if (tabId === 'training') {
       await loadTrainingConfig();
       return;
     }
-    if (tabId === 'tools' && toolsList.length === 0) {
+    if (tabId === 'tools') {
       await loadToolsConfig();
       return;
     }
-    if (tabId === 'concepts' && !conceptsForm) {
+    if (tabId === 'concepts') {
       await loadConceptsConfig();
     }
   }
 
   async function loadGeneralConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchGeneralConfig();
-      generalForm = response.data;
-      validateAfterUnits = response.meta.validate_after_units;
-      gradientReducePrecisions = response.meta.gradient_reduce_precisions;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load General config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'general';
+    await loadGeneralState({
+      setGeneralForm: (value) => {
+        generalForm = value;
+      },
+      setValidateAfterUnits: (value) => {
+        validateAfterUnits = value;
+      },
+      setGradientReducePrecisions: (value) => {
+        gradientReducePrecisions = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadModelConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchModelConfig();
-      modelForm = response.data;
-      trainingMethods = response.meta.training_methods;
-      modelTypes = response.meta.model_types;
-      dataTypes = response.meta.data_types;
-      outputDtypes = response.meta.output_dtypes;
-      modelFormats = response.meta.model_formats;
-      includeTrainConfigs = response.meta.include_train_configs;
-      quantizationPresets = response.meta.quantization_presets;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Model config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'model';
+    await loadModelState({
+      setModelForm: (value) => {
+        modelForm = value;
+      },
+      setTrainingMethods: (value) => {
+        trainingMethods = value;
+      },
+      setModelTypes: (value) => {
+        modelTypes = value;
+      },
+      setDataTypes: (value) => {
+        dataTypes = value;
+      },
+      setOutputDtypes: (value) => {
+        outputDtypes = value;
+      },
+      setModelFormats: (value) => {
+        modelFormats = value;
+      },
+      setIncludeTrainConfigs: (value) => {
+        includeTrainConfigs = value;
+      },
+      setQuantizationPresets: (value) => {
+        quantizationPresets = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadDataConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchDataConfig();
-      dataForm = response.data;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Data config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'data';
+    await loadDataState({
+      setDataForm: (value) => {
+        dataForm = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadLoraConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchLoraConfig();
-      loraForm = response.data;
-      peftTypes = response.meta.peft_types;
-      loraWeightDtypes = response.meta.lora_weight_dtypes;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load LoRA config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'lora';
+    await loadLoraState({
+      setLoraForm: (value) => {
+        loraForm = value;
+      },
+      setPeftTypes: (value) => {
+        peftTypes = value;
+      },
+      setLoraWeightDtypes: (value) => {
+        loraWeightDtypes = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadConceptsConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchConceptsConfig();
-      conceptsForm = response.data;
-      conceptTypes = response.meta.concept_types;
-      balancingStrategies = response.meta.balancing_strategies;
-      promptSources = response.meta.prompt_sources;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Concepts config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'concepts';
+    await loadConceptsState({
+      setConceptsForm: (value) => {
+        conceptsForm = value;
+      },
+      setConceptTypes: (value) => {
+        conceptTypes = value;
+      },
+      setBalancingStrategies: (value) => {
+        balancingStrategies = value;
+      },
+      setPromptSources: (value) => {
+        promptSources = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadBackupConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchBackupConfig();
-      backupForm = response.data;
-      backupAfterUnits = response.meta.backup_after_units;
-      saveEveryUnits = response.meta.save_every_units;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Backup config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'backup';
+    await loadBackupState({
+      setBackupForm: (value) => {
+        backupForm = value;
+      },
+      setBackupAfterUnits: (value) => {
+        backupAfterUnits = value;
+      },
+      setSaveEveryUnits: (value) => {
+        saveEveryUnits = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadSamplingConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchSamplingConfig();
-      samplingForm = response.data;
-      sampleAfterUnits = response.meta.sample_after_units;
-      sampleImageFormats = response.meta.sample_image_formats;
-      sampleVideoFormats = response.meta.sample_video_formats;
-      sampleAudioFormats = response.meta.sample_audio_formats;
-      noiseSchedulers = response.meta.noise_schedulers;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Sampling config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'sampling';
+    await loadSamplingState({
+      setSamplingForm: (value) => {
+        samplingForm = value;
+      },
+      setSampleAfterUnits: (value) => {
+        sampleAfterUnits = value;
+      },
+      setSampleImageFormats: (value) => {
+        sampleImageFormats = value;
+      },
+      setSampleVideoFormats: (value) => {
+        sampleVideoFormats = value;
+      },
+      setSampleAudioFormats: (value) => {
+        sampleAudioFormats = value;
+      },
+      setNoiseSchedulers: (value) => {
+        noiseSchedulers = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadTrainingConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchTrainingConfig();
-      trainingForm = response.data;
-      trainingClipGradNorm = response.data.clip_grad_norm ?? '';
-      optimizers = response.meta.optimizers;
-      learningRateSchedulers = response.meta.learning_rate_schedulers;
-      learningRateScalers = response.meta.learning_rate_scalers;
-      emaModes = response.meta.ema_modes;
-      gradientCheckpointingMethods = response.meta.gradient_checkpointing_methods;
-      trainDtypes = response.meta.train_dtypes;
-      fallbackTrainDtypes = response.meta.fallback_train_dtypes;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Training config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'training';
+    await loadTrainingState({
+      setTrainingForm: (value) => {
+        trainingForm = value;
+      },
+      setTrainingClipGradNorm: (value) => {
+        trainingClipGradNorm = value;
+      },
+      setOptimizers: (value) => {
+        optimizers = value;
+      },
+      setLearningRateSchedulers: (value) => {
+        learningRateSchedulers = value;
+      },
+      setLearningRateScalers: (value) => {
+        learningRateScalers = value;
+      },
+      setEmaModes: (value) => {
+        emaModes = value;
+      },
+      setGradientCheckpointingMethods: (value) => {
+        gradientCheckpointingMethods = value;
+      },
+      setTrainDtypes: (value) => {
+        trainDtypes = value;
+      },
+      setFallbackTrainDtypes: (value) => {
+        fallbackTrainDtypes = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function loadToolsConfig() {
-    loading = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await fetchToolsConfig();
-      toolsList = response.data.tools;
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to load Tools config';
-    } finally {
-      loading = false;
-    }
+    const tabId: TabId = 'tools';
+    await loadToolsState({
+      setToolsList: (value) => {
+        toolsList = value;
+      },
+      markLoaded: () => markTabLoaded(tabId),
+      stateSetters: loadStateSetters(tabId)
+    });
   }
 
   async function onSubmitGeneral(event: SubmitEvent) {
@@ -310,28 +375,14 @@
     if (!generalForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: GeneralSettings = {
-      ...generalForm,
-      tensorboard_port: Number(generalForm.tensorboard_port),
-      validate_after: Number(generalForm.validate_after),
-      dataloader_threads: Number(generalForm.dataloader_threads),
-      async_gradient_reduce_buffer: Number(generalForm.async_gradient_reduce_buffer)
-    };
-
-    try {
-      const response = await saveGeneralConfig(payload);
-      generalForm = response.data;
-      statusMessage = 'General settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save General config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'general';
+    await saveGeneralState({
+      generalForm,
+      setGeneralForm: (value) => {
+        generalForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitModel(event: SubmitEvent) {
@@ -339,28 +390,14 @@
     if (!modelForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: ModelSettings = {
-      ...modelForm,
-      quantization: {
-        ...modelForm.quantization,
-        svd_rank: Number(modelForm.quantization.svd_rank)
-      }
-    };
-
-    try {
-      const response = await saveModelConfig(payload);
-      modelForm = response.data;
-      statusMessage = 'Model settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Model config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'model';
+    await saveModelState({
+      modelForm,
+      setModelForm: (value) => {
+        modelForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitData(event: SubmitEvent) {
@@ -368,20 +405,14 @@
     if (!dataForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await saveDataConfig(dataForm);
-      dataForm = response.data;
-      statusMessage = 'Data settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Data config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'data';
+    await saveDataState({
+      dataForm,
+      setDataForm: (value) => {
+        dataForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitLora(event: SubmitEvent) {
@@ -389,29 +420,14 @@
     if (!loraForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: LoraSettings = {
-      ...loraForm,
-      lora_rank: Number(loraForm.lora_rank),
-      lora_alpha: Number(loraForm.lora_alpha),
-      dropout_probability: Number(loraForm.dropout_probability),
-      oft_block_size: Number(loraForm.oft_block_size),
-      coft_eps: Number(loraForm.coft_eps)
-    };
-
-    try {
-      const response = await saveLoraConfig(payload);
-      loraForm = response.data;
-      statusMessage = 'LoRA settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save LoRA config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'lora';
+    await saveLoraState({
+      loraForm,
+      setLoraForm: (value) => {
+        loraForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitConcepts(event: SubmitEvent) {
@@ -419,20 +435,14 @@
     if (!conceptsForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    try {
-      const response = await saveConceptsConfig(conceptsForm);
-      conceptsForm = response.data;
-      statusMessage = 'Concept settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Concepts config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'concepts';
+    await saveConceptsState({
+      conceptsForm,
+      setConceptsForm: (value) => {
+        conceptsForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitBackup(event: SubmitEvent) {
@@ -440,28 +450,14 @@
     if (!backupForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: BackupSettings = {
-      ...backupForm,
-      backup_after: Number(backupForm.backup_after),
-      rolling_backup_count: Number(backupForm.rolling_backup_count),
-      save_every: Number(backupForm.save_every),
-      save_skip_first: Number(backupForm.save_skip_first)
-    };
-
-    try {
-      const response = await saveBackupConfig(payload);
-      backupForm = response.data;
-      statusMessage = 'Backup settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Backup config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'backup';
+    await saveBackupState({
+      backupForm,
+      setBackupForm: (value) => {
+        backupForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitSampling(event: SubmitEvent) {
@@ -469,48 +465,14 @@
     if (!samplingForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: SamplingSettings = {
-      ...samplingForm,
-      sample_after: Number(samplingForm.sample_after),
-      sample_skip_first: Number(samplingForm.sample_skip_first),
-      samples: samplingForm.samples.map((sample) => ({
-        ...sample,
-        width: Number(sample.width),
-        height: Number(sample.height),
-        frames: Number(sample.frames),
-        length: Number(sample.length),
-        seed: Number(sample.seed),
-        diffusion_steps: Number(sample.diffusion_steps),
-        cfg_scale: Number(sample.cfg_scale),
-        text_encoder_1_layer_skip: Number(sample.text_encoder_1_layer_skip),
-        text_encoder_1_sequence_length:
-          sample.text_encoder_1_sequence_length === null || sample.text_encoder_1_sequence_length === undefined
-            ? null
-            : Number(sample.text_encoder_1_sequence_length),
-        text_encoder_2_layer_skip: Number(sample.text_encoder_2_layer_skip),
-        text_encoder_2_sequence_length:
-          sample.text_encoder_2_sequence_length === null || sample.text_encoder_2_sequence_length === undefined
-            ? null
-            : Number(sample.text_encoder_2_sequence_length),
-        text_encoder_3_layer_skip: Number(sample.text_encoder_3_layer_skip),
-        text_encoder_4_layer_skip: Number(sample.text_encoder_4_layer_skip)
-      }))
-    };
-
-    try {
-      const response = await saveSamplingConfig(payload);
-      samplingForm = response.data;
-      statusMessage = 'Sampling settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Sampling config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'sampling';
+    await saveSamplingState({
+      samplingForm,
+      setSamplingForm: (value) => {
+        samplingForm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   async function onSubmitTraining(event: SubmitEvent) {
@@ -518,36 +480,18 @@
     if (!trainingForm) {
       return;
     }
-
-    saving = true;
-    errorMessage = '';
-    statusMessage = '';
-
-    const payload: TrainingSettings = {
-      ...trainingForm,
-      learning_rate: Number(trainingForm.learning_rate),
-      learning_rate_warmup_steps: Number(trainingForm.learning_rate_warmup_steps),
-      learning_rate_min_factor: Number(trainingForm.learning_rate_min_factor),
-      learning_rate_cycles: Number(trainingForm.learning_rate_cycles),
-      epochs: Number(trainingForm.epochs),
-      batch_size: Number(trainingForm.batch_size),
-      gradient_accumulation_steps: Number(trainingForm.gradient_accumulation_steps),
-      clip_grad_norm: trainingClipGradNorm === '' ? null : Number(trainingClipGradNorm),
-      ema_decay: Number(trainingForm.ema_decay),
-      ema_update_step_interval: Number(trainingForm.ema_update_step_interval),
-      layer_offload_fraction: Number(trainingForm.layer_offload_fraction)
-    };
-
-    try {
-      const response = await saveTrainingConfig(payload);
-      trainingForm = response.data;
-      trainingClipGradNorm = response.data.clip_grad_norm ?? '';
-      statusMessage = 'Training settings saved.';
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : 'Failed to save Training config';
-    } finally {
-      saving = false;
-    }
+    const tabId: TabId = 'training';
+    await saveTrainingState({
+      trainingForm,
+      trainingClipGradNorm,
+      setTrainingForm: (value) => {
+        trainingForm = value;
+      },
+      setTrainingClipGradNorm: (value) => {
+        trainingClipGradNorm = value;
+      },
+      stateSetters: saveStateSetters(tabId)
+    });
   }
 
   function createDefaultConcept(): ConceptSettings {
@@ -637,31 +581,33 @@
     };
   }
 
-  async function onTabChange(event: CustomEvent<{ tabId: string }>) {
+  async function onTabChange(event: CustomEvent<{ tabId: TabId }>) {
     activeTab = event.detail.tabId;
-    statusMessage = '';
-    errorMessage = '';
+    if (!loadedByTab[activeTab]) {
+      setTabLoading(activeTab, true);
+    }
     await ensureTabLoaded(activeTab);
   }
 
   async function onToolAction(tool: ToolInfo) {
+    const tabId: TabId = 'tools';
     if (tool.action_type === 'WEB_LINK') {
       window.open(tool.action_value, '_blank', 'noopener,noreferrer');
-      statusMessage = `${tool.name} opened.`;
+      setTabStatusMessage(tabId, `${tool.name} opened.`);
       return;
     }
 
     if (tool.action_type === 'CLI_COMMAND') {
       try {
         await navigator.clipboard.writeText(tool.action_value);
-        statusMessage = `${tool.name} command copied: ${tool.action_value}`;
+        setTabStatusMessage(tabId, `${tool.name} command copied: ${tool.action_value}`);
       } catch {
-        statusMessage = `${tool.name} command: ${tool.action_value}`;
+        setTabStatusMessage(tabId, `${tool.name} command: ${tool.action_value}`);
       }
       return;
     }
 
-    statusMessage = tool.action_value;
+    setTabStatusMessage(tabId, tool.action_value);
   }
 </script>
 
@@ -708,7 +654,7 @@
       <p class="error">Unable to initialize Sampling settings.</p>
     {:else if activeTab === 'training' && !trainingForm}
       <p class="error">Unable to initialize Training settings.</p>
-    {:else if activeTab === 'tools' && toolsList.length === 0}
+    {:else if activeTab === 'tools' && !loadedByTab.tools}
       <p class="error">Unable to initialize Tools settings.</p>
     {:else if activeTab === 'concepts' && !conceptsForm}
       <p class="error">Unable to initialize Concepts settings.</p>
