@@ -20,6 +20,12 @@ uv run uvicorn app.main:app --reload --port 8011
 
 Implements web-config endpoints for `General`, `Model`, `LoRA`, `Data`, `Training`, `Sampling`, `Backup`, `Tools`, and `Concepts`.
 
+Architecture status:
+- Thin route handlers in `app/routes/*`
+- Per-feature orchestration in `app/services/*`
+- Per-feature mapping in `app/mappers/*`
+- Modular schemas in `app/schemas/*` (`common.py`, feature-specific schema files, and `__init__.py` re-exports)
+
 Current routes:
 - `GET/POST /api/v1/general-config`
 - `GET/POST /api/v1/model-config`

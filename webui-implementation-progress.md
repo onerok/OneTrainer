@@ -7,7 +7,8 @@ Last updated: 2026-02-18
   - Svelte frontend
   - shadcn-style component structure
   - FastAPI backend
-- Tabs are implemented incrementally (`General` complete, `Model` started in this session).
+- All target tabs are now implemented in web UI:
+  - `General`, `Model`, `LoRA`, `Data`, `Training`, `Sampling`, `Backup`, `Tools`, `Concepts`
 
 ## Delivery Process (Per Tab)
 - We will implement the web UI one tab at a time.
@@ -60,7 +61,6 @@ Last updated: 2026-02-18
 ### 2. FastAPI backend (`apps/api`)
 - Added:
   - `apps/api/app/main.py`
-  - `apps/api/app/schemas.py`
   - `apps/api/requirements.txt`
   - `apps/api/README.md`
 - Implemented endpoints:
@@ -70,6 +70,19 @@ Last updated: 2026-02-18
 - `General` fields mapped to existing `TrainConfig` keys (no custom schema drift).
 - Persistence implemented to:
   - `training_user_settings/web-general-config.json`
+- Refactor status:
+  - Route/service/mapper split completed for all implemented tabs.
+  - Schema modularization completed:
+    - `apps/api/app/schemas/common.py`
+    - `apps/api/app/schemas/general.py`
+    - `apps/api/app/schemas/model.py`
+    - `apps/api/app/schemas/lora.py`
+    - `apps/api/app/schemas/data.py`
+    - `apps/api/app/schemas/training.py`
+    - `apps/api/app/schemas/sampling.py`
+    - `apps/api/app/schemas/backup.py`
+    - `apps/api/app/schemas/concepts.py`
+    - `apps/api/app/schemas/tools.py`
 
 ### 3. Svelte frontend (`apps/web`)
 - Added Vite/Svelte app scaffolding:
@@ -91,11 +104,18 @@ Last updated: 2026-02-18
   - `apps/web/src/lib/components/ui/Select.svelte`
   - `apps/web/src/lib/components/ui/Switch.svelte`
   - `apps/web/src/lib/components/ui/Tabs.svelte`
-- Implemented `General` tab form in:
-  - `apps/web/src/App.svelte`
+- Implemented feature tabs and shell in:
+  - `apps/web/src/app/AppShell.svelte`
+  - `apps/web/src/features/*`
 - Added styling in:
   - `apps/web/src/app.css`
-- Non-General tabs are present as disabled placeholders.
+- Refactor status:
+  - Per-tab feature component extraction completed.
+  - Per-tab `state.ts` extraction completed.
+  - Per-tab `adapter.ts` extraction completed.
+  - Shared layer introduced:
+    - `apps/web/src/shared/api/http.ts`
+    - `apps/web/src/shared/state/ui.ts`
 
 ### 4. Dev workflow and docs
 - Added `web-tmux` recipe to `justfile`:
@@ -115,38 +135,22 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
 - Playwright manual E2E checks:
   - App loads
-  - General tab renders expected fields
-  - Save + reload flow works
-  - Disabled tabs verified
+  - Tab flows render and save/reload across implemented features.
+- Playwright automated smoke:
+  - `npm --prefix apps/web run smoke:playwright` (requires running API + web servers)
 
-## Known Issue
-- CORS is currently hardcoded to only `5173` origin in `apps/api/app/main.py`.
-- If Vite starts on another port (for example 5175), requests fail with CORS error.
-
-## TODO (Next Session)
-
-### High priority
-- [ ] Make backend CORS configurable via env var(s), not fixed to port 5173.
-- [ ] Add backend startup config constants/env support (host, port, origins) and document.
-- [ ] Add frontend env example (`.env.example`) with `VITE_API_BASE_URL`.
-- [ ] Add a lightweight Playwright smoke script to automate:
-  - open app
-  - verify General form load
-  - edit one field
-  - save and verify persisted value
-
-### Medium priority
-- [ ] Decide and implement routing/layout strategy before next tab migration:
-  - single-page tabs vs route-per-tab
-- [ ] Extract General form sections into smaller Svelte components.
-- [ ] Add field-level validation UX (invalid numbers, empty required strings).
-- [ ] Improve API error display in UI (status code + message).
-
-### Next feature slice
-- [ ] Implement `Training` tab backend contract.
-- [ ] Implement `Training` tab frontend UI with same config-key alignment approach used for General/Model/Data/Concepts.
+## Current Status Summary
+- Completed:
+  - Backend route/service/mapper/schema modularization
+  - Frontend app shell + feature extraction + per-tab state/adapter extraction
+  - Shared frontend ownership points (`shared/api/http.ts`, `shared/state/ui.ts`)
+  - Automated Playwright smoke script
+- Remaining:
+  - Final cleanup/documentation consistency and optional future UX improvements (validation/error UX polish)
 
 ## Session Update (2026-02-18)
 
@@ -823,6 +827,216 @@ Last updated: 2026-02-18
 - Docs:
   - Updated `apps/api/README.md` with backend env variable documentation.
   - Updated `apps/web/README.md` to reference `.env.example` usage.
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Frontend config-resource helper adoption)
+
+### Implemented in this session (Refactor Step 5 start)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/app/configResource.ts` with shared helper functions for tab config flows:
+    - `loadConfigResource(...)` for standardized load-state/message/error handling
+    - `saveConfigResource(...)` for standardized save-state/message/error handling
+  - Updated `apps/web/src/app/AppShell.svelte` to migrate all existing tab load/save handlers to the shared helper without changing endpoint contracts or tab UX.
+  - Preserved existing per-tab payload shaping and success messages.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Step 6 per-tab state flags)
+
+### Implemented in this session (Refactor Step 6 continuation)
+- Frontend (`apps/web`):
+  - Introduced typed tab identifiers in `apps/web/src/app/routes.ts` and updated tab events in `apps/web/src/lib/components/ui/Tabs.svelte`.
+  - Replaced global `loading/saving/error/status` state in `apps/web/src/app/AppShell.svelte` with per-tab state maps.
+  - Updated config load/save flows to use tab-scoped state setters while preserving existing API contracts and UX messaging.
+  - Updated first-load tracking to use explicit per-tab `loaded` flags.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, General state module extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/general/state.ts` and moved General tab orchestration there:
+    - load flow (`loadGeneralState`)
+    - save flow + payload shaping (`saveGeneralState`)
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate General tab load/save logic to the new feature state module.
+  - Preserved endpoint contracts and UI behavior.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Model state module extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/model/state.ts` and moved Model tab orchestration there:
+    - load flow (`loadModelState`)
+    - save flow + payload shaping (`saveModelState`)
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate Model tab load/save logic to the new feature state module.
+  - Preserved endpoint contracts and UI behavior.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, LoRA state module extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/lora/state.ts` and moved LoRA tab orchestration there:
+    - load flow (`loadLoraState`)
+    - save flow + payload shaping (`saveLoraState`)
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate LoRA tab load/save logic to the new feature state module.
+  - Preserved endpoint contracts and UI behavior.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Data state module extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/data/state.ts` and moved Data tab orchestration there:
+    - load flow (`loadDataState`)
+    - save flow (`saveDataState`)
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate Data tab load/save logic to the new feature state module.
+  - Preserved endpoint contracts and UI behavior.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Remaining tab state-module extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/features/training/state.ts` and moved Training tab orchestration there.
+  - Added `apps/web/src/features/backup/state.ts` and moved Backup tab orchestration there.
+  - Added `apps/web/src/features/concepts/state.ts` and moved Concepts tab orchestration there.
+  - Added `apps/web/src/features/tools/state.ts` and moved Tools tab load orchestration there.
+  - Added `apps/web/src/features/sampling/state.ts` and moved Sampling tab orchestration there.
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate the above tab flows to feature state modules.
+  - `AppShell` remains responsible for shell-level concerns and local helper actions (tab switching and local add/remove helpers).
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Feature adapters extraction)
+
+### Implemented in this session (Refactor Step 6/Vertical-slice continuation)
+- Frontend (`apps/web`):
+  - Added per-feature adapter modules to isolate UI/data shaping logic:
+    - `apps/web/src/features/general/adapter.ts`
+    - `apps/web/src/features/model/adapter.ts`
+    - `apps/web/src/features/lora/adapter.ts`
+    - `apps/web/src/features/data/adapter.ts`
+    - `apps/web/src/features/training/adapter.ts`
+    - `apps/web/src/features/sampling/adapter.ts`
+    - `apps/web/src/features/backup/adapter.ts`
+    - `apps/web/src/features/concepts/adapter.ts`
+    - `apps/web/src/features/tools/adapter.ts`
+  - Updated all feature `state.ts` modules to consume adapters for response mapping and save-payload shaping.
+  - Preserved API contracts and UI behavior while reducing transformation logic in state handlers.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Adapter + shared layer alignment)
+
+### Implemented in this session (Refactor Step 6/Shared-layer continuation)
+- Frontend (`apps/web`):
+  - Added per-feature `adapter.ts` files and moved response/payload shaping out of `state.ts` handlers.
+  - Added `apps/web/src/shared/api/http.ts` and moved OpenAPI base configuration + API error wrapping there.
+  - Updated `apps/web/src/lib/api/client.ts` to use shared HTTP helpers.
+  - Added `apps/web/src/shared/state/ui.ts` with reusable tab-state factory helpers.
+  - Updated `apps/web/src/app/AppShell.svelte` to use `shared/state/ui.ts` helpers.
+- Decision:
+  - Keep `src/lib` as a compatibility layer for generated client/types while introducing `src/shared` for cross-feature ownership points.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Backend schema modularization)
+
+### Implemented in this session (Refactor backend structure continuation)
+- Backend (`apps/api`):
+  - Replaced monolithic `apps/api/app/schemas.py` with modular schema package `apps/api/app/schemas/`.
+  - Added schema modules:
+    - `common.py`
+    - `general.py`
+    - `model.py`
+    - `lora.py`
+    - `data.py`
+    - `training.py`
+    - `sampling.py`
+    - `backup.py`
+    - `concepts.py`
+    - `tools.py`
+  - Added `apps/api/app/schemas/__init__.py` to re-export schema symbols and preserve existing import style (`from ..schemas import ...`).
+  - Removed legacy `apps/api/app/schemas.py`.
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Playwright smoke automation)
+
+### Implemented in this session
+- Frontend (`apps/web`):
+  - Added lightweight smoke script: `apps/web/scripts/playwright_smoke.sh`.
+  - Added npm command: `npm run smoke:playwright` in `apps/web/package.json`.
+  - Script flow validates General tab save/reload persistence for `workspace_dir` via `playwright-cli`.
+- Docs:
+  - Updated `apps/web/README.md` with smoke-script usage and env overrides.
+
+### Validation run this session
+- Script syntax check:
+  - `bash -n apps/web/scripts/playwright_smoke.sh`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+
+### Notes
+- Full smoke execution requires running API + web dev servers first (script assumes live app endpoint).
+
+## Session Update (2026-02-18, Final cleanup pass)
+
+### Implemented in this session (Refactor Step 7)
+- Cleanup:
+  - Removed dead import in `apps/web/src/app/AppShell.svelte` after feature ownership migration.
+  - Reconciled stale top-level sections in `webui-implementation-progress.md` (`Known Issue`/`TODO` area and high-level implementation summary).
+- Docs:
+  - Updated `apps/api/README.md` to reflect current backend ownership split (`routes`, `services`, `mappers`, `schemas`).
+  - Updated `apps/web/README.md` to reflect current frontend ownership (`app`, `features/<tab>/state.ts`, `features/<tab>/adapter.ts`, `shared/*`).
 
 ### Validation run this session
 - Backend compile check:

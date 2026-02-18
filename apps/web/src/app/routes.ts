@@ -1,5 +1,19 @@
+export const TAB_IDS = [
+  'general',
+  'model',
+  'lora',
+  'data',
+  'concepts',
+  'training',
+  'sampling',
+  'backup',
+  'tools'
+] as const;
+
+export type TabId = (typeof TAB_IDS)[number];
+
 export type AppRoute = {
-  id: string;
+  id: TabId;
   label: string;
   disabled: boolean;
 };

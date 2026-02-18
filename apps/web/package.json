@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "gen:api": "python scripts/export_openapi.py && openapi --input src/lib/api/generated/openapi.json --output src/lib/api/generated --client fetch --useOptions --useUnionTypes --exportSchemas false"
+    "gen:api": "python scripts/export_openapi.py && openapi --input src/lib/api/generated/openapi.json --output src/lib/api/generated --client fetch --useOptions --useUnionTypes --exportSchemas false",
+    "smoke:playwright": "bash scripts/playwright_smoke.sh"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
