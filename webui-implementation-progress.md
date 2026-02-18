@@ -795,3 +795,17 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Per-tab lazy loading)
+
+### Implemented in this session (Refactor Step 6 start)
+- Frontend (`apps/web`):
+  - Replaced eager `onMount` loading of all tabs with lazy load on demand.
+  - Added `ensureTabLoaded(tabId)` in `apps/web/src/app/AppShell.svelte`.
+  - Initial load now fetches only the active tab.
+  - Tab changes trigger first-load fetch for that tab if not already loaded.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
