@@ -779,3 +779,19 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Frontend shell cleanup)
+
+### Implemented in this session (Refactor Step 4 continuation)
+- Frontend (`apps/web`):
+  - Completed extraction of remaining major tabs to feature components:
+    - `apps/web/src/features/model/ModelTab.svelte`
+    - `apps/web/src/features/sampling/SamplingTab.svelte`
+    - `apps/web/src/features/concepts/ConceptsTab.svelte`
+  - Updated `apps/web/src/app/AppShell.svelte` to delegate all major tab rendering to feature components.
+  - Removed now-unused direct UI imports from `AppShell` after extraction.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`

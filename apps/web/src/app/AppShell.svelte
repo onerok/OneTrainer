@@ -35,10 +35,6 @@
   } from '../lib/api/types';
   import Button from '../lib/components/ui/Button.svelte';
   import Card from '../lib/components/ui/Card.svelte';
-  import Input from '../lib/components/ui/Input.svelte';
-  import Label from '../lib/components/ui/Label.svelte';
-  import Select from '../lib/components/ui/Select.svelte';
-  import Switch from '../lib/components/ui/Switch.svelte';
   import Tabs from '../lib/components/ui/Tabs.svelte';
   import BackupTab from '../features/backup/BackupTab.svelte';
   import ConceptsTab from '../features/concepts/ConceptsTab.svelte';
