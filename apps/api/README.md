@@ -10,6 +10,12 @@ uv sync
 uv run uvicorn app.main:app --reload --port 8011
 ```
 
+## Environment
+
+- `ONETRAINER_API_HOST` (default: `127.0.0.1`)
+- `ONETRAINER_API_PORT` (default: `8011`)
+- `ONETRAINER_API_CORS_ORIGINS` (comma-separated, default: `http://localhost:5173,http://127.0.0.1:5173`)
+
 ## Scope
 
 Implements web-config endpoints for `General`, `Model`, `LoRA`, `Data`, `Training`, `Sampling`, `Backup`, `Tools`, and `Concepts`.

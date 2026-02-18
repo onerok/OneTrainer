@@ -17,6 +17,12 @@ Optional API override:
 VITE_API_BASE_URL=http://localhost:8011 npm run dev
 ```
 
+Or copy the example env file:
+
+```bash
+cp .env.example .env
+```
+
 ## Scope
 
 Current UI includes `General`, `Model`, `LoRA`, `Data`, `Training`, `Sampling`, `Backup`, `Tools`, and `Concepts`.
