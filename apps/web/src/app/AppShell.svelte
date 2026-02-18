@@ -100,16 +100,46 @@
   let errorMessage = '';
 
   onMount(async () => {
-    await loadGeneralConfig();
-    await loadModelConfig();
-    await loadLoraConfig();
-    await loadDataConfig();
-    await loadBackupConfig();
-    await loadSamplingConfig();
-    await loadTrainingConfig();
-    await loadToolsConfig();
-    await loadConceptsConfig();
+    await ensureTabLoaded(activeTab);
   });
+
+  async function ensureTabLoaded(tabId: string) {
+    if (tabId === 'general' && !generalForm) {
+      await loadGeneralConfig();
+      return;
+    }
+    if (tabId === 'model' && !modelForm) {
+      await loadModelConfig();
+      return;
+    }
+    if (tabId === 'lora' && !loraForm) {
+      await loadLoraConfig();
+      return;
+    }
+    if (tabId === 'data' && !dataForm) {
+      await loadDataConfig();
+      return;
+    }
+    if (tabId === 'backup' && !backupForm) {
+      await loadBackupConfig();
+      return;
+    }
+    if (tabId === 'sampling' && !samplingForm) {
+      await loadSamplingConfig();
+      return;
+    }
+    if (tabId === 'training' && !trainingForm) {
+      await loadTrainingConfig();
+      return;
+    }
+    if (tabId === 'tools' && toolsList.length === 0) {
+      await loadToolsConfig();
+      return;
+    }
+    if (tabId === 'concepts' && !conceptsForm) {
+      await loadConceptsConfig();
+    }
+  }
 
   async function loadGeneralConfig() {
     loading = true;
@@ -607,10 +637,11 @@
     };
   }
 
-  function onTabChange(event: CustomEvent<{ tabId: string }>) {
+  async function onTabChange(event: CustomEvent<{ tabId: string }>) {
     activeTab = event.detail.tabId;
     statusMessage = '';
     errorMessage = '';
+    await ensureTabLoaded(activeTab);
   }
 
   async function onToolAction(tool: ToolInfo) {
