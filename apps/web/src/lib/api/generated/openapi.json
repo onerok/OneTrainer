@@ -1,0 +1,2365 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OneTrainer Web API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/general-config": {
+      "get": {
+        "summary": "Get General Config",
+        "operationId": "get_general_config_api_v1_general_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save General Config",
+        "operationId": "save_general_config_api_v1_general_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveGeneralConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model-config": {
+      "get": {
+        "summary": "Get Model Config",
+        "operationId": "get_model_config_api_v1_model_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Model Config",
+        "operationId": "save_model_config_api_v1_model_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveModelConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lora-config": {
+      "get": {
+        "summary": "Get Lora Config",
+        "operationId": "get_lora_config_api_v1_lora_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoraConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Lora Config",
+        "operationId": "save_lora_config_api_v1_lora_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLoraConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoraConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/data-config": {
+      "get": {
+        "summary": "Get Data Config",
+        "operationId": "get_data_config_api_v1_data_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Data Config",
+        "operationId": "save_data_config_api_v1_data_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveDataConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup-config": {
+      "get": {
+        "summary": "Get Backup Config",
+        "operationId": "get_backup_config_api_v1_backup_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackupConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Backup Config",
+        "operationId": "save_backup_config_api_v1_backup_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveBackupConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackupConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sampling-config": {
+      "get": {
+        "summary": "Get Sampling Config",
+        "operationId": "get_sampling_config_api_v1_sampling_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplingConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Sampling Config",
+        "operationId": "save_sampling_config_api_v1_sampling_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSamplingConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SamplingConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/training-config": {
+      "get": {
+        "summary": "Get Training Config",
+        "operationId": "get_training_config_api_v1_training_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Training Config",
+        "operationId": "save_training_config_api_v1_training_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveTrainingConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/concepts-config": {
+      "get": {
+        "summary": "Get Concepts Config",
+        "operationId": "get_concepts_config_api_v1_concepts_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConceptsConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save Concepts Config",
+        "operationId": "save_concepts_config_api_v1_concepts_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveConceptsConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConceptsConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools-config": {
+      "get": {
+        "summary": "Get Tools Config",
+        "operationId": "get_tools_config_api_v1_tools_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolsConfigResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AudioFormatValue": {
+        "type": "string",
+        "enum": [
+          "MP3"
+        ],
+        "title": "AudioFormatValue"
+      },
+      "BackupConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BackupSettings"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/BackupMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "BackupConfigResponse"
+      },
+      "BackupMeta": {
+        "properties": {
+          "backup_after_units": {
+            "items": {
+              "$ref": "#/components/schemas/TimeUnitValue"
+            },
+            "type": "array",
+            "title": "Backup After Units"
+          },
+          "save_every_units": {
+            "items": {
+              "$ref": "#/components/schemas/TimeUnitValue"
+            },
+            "type": "array",
+            "title": "Save Every Units"
+          }
+        },
+        "type": "object",
+        "required": [
+          "backup_after_units",
+          "save_every_units"
+        ],
+        "title": "BackupMeta"
+      },
+      "BackupSettings": {
+        "properties": {
+          "backup_after": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Backup After"
+          },
+          "backup_after_unit": {
+            "$ref": "#/components/schemas/TimeUnitValue"
+          },
+          "rolling_backup": {
+            "type": "boolean",
+            "title": "Rolling Backup"
+          },
+          "rolling_backup_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Rolling Backup Count"
+          },
+          "backup_before_save": {
+            "type": "boolean",
+            "title": "Backup Before Save"
+          },
+          "save_every": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Save Every"
+          },
+          "save_every_unit": {
+            "$ref": "#/components/schemas/TimeUnitValue"
+          },
+          "save_skip_first": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Save Skip First"
+          },
+          "save_filename_prefix": {
+            "type": "string",
+            "title": "Save Filename Prefix"
+          }
+        },
+        "type": "object",
+        "required": [
+          "backup_after",
+          "backup_after_unit",
+          "rolling_backup",
+          "rolling_backup_count",
+          "backup_before_save",
+          "save_every",
+          "save_every_unit",
+          "save_skip_first",
+          "save_filename_prefix"
+        ],
+        "title": "BackupSettings"
+      },
+      "BalancingStrategyValue": {
+        "type": "string",
+        "enum": [
+          "REPEATS",
+          "SAMPLES"
+        ],
+        "title": "BalancingStrategyValue"
+      },
+      "ConceptSettings": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ConceptTypeValue"
+          },
+          "include_subdirectories": {
+            "type": "boolean",
+            "title": "Include Subdirectories"
+          },
+          "image_variations": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Image Variations"
+          },
+          "text_variations": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Text Variations"
+          },
+          "balancing": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Balancing"
+          },
+          "balancing_strategy": {
+            "$ref": "#/components/schemas/BalancingStrategyValue"
+          },
+          "loss_weight": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Loss Weight"
+          },
+          "text": {
+            "$ref": "#/components/schemas/ConceptTextSettings"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "name",
+          "path",
+          "enabled",
+          "type",
+          "include_subdirectories",
+          "image_variations",
+          "text_variations",
+          "balancing",
+          "balancing_strategy",
+          "loss_weight",
+          "text"
+        ],
+        "title": "ConceptSettings"
+      },
+      "ConceptTextSettings": {
+        "properties": {
+          "prompt_source": {
+            "type": "string",
+            "title": "Prompt Source"
+          },
+          "prompt_path": {
+            "type": "string",
+            "title": "Prompt Path"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "prompt_source",
+          "prompt_path"
+        ],
+        "title": "ConceptTextSettings"
+      },
+      "ConceptTypeValue": {
+        "type": "string",
+        "enum": [
+          "STANDARD",
+          "VALIDATION",
+          "PRIOR_PREDICTION"
+        ],
+        "title": "ConceptTypeValue"
+      },
+      "ConceptsConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ConceptsSettings-Output"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ConceptsMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ConceptsConfigResponse"
+      },
+      "ConceptsMeta": {
+        "properties": {
+          "concept_types": {
+            "items": {
+              "$ref": "#/components/schemas/ConceptTypeValue"
+            },
+            "type": "array",
+            "title": "Concept Types"
+          },
+          "balancing_strategies": {
+            "items": {
+              "$ref": "#/components/schemas/BalancingStrategyValue"
+            },
+            "type": "array",
+            "title": "Balancing Strategies"
+          },
+          "prompt_sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Prompt Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concept_types",
+          "balancing_strategies",
+          "prompt_sources"
+        ],
+        "title": "ConceptsMeta"
+      },
+      "ConceptsSettings-Input": {
+        "properties": {
+          "concept_file_name": {
+            "type": "string",
+            "title": "Concept File Name"
+          },
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/ConceptSettings"
+            },
+            "type": "array",
+            "title": "Concepts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concept_file_name",
+          "concepts"
+        ],
+        "title": "ConceptsSettings"
+      },
+      "ConceptsSettings-Output": {
+        "properties": {
+          "concept_file_name": {
+            "type": "string",
+            "title": "Concept File Name"
+          },
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/ConceptSettings"
+            },
+            "type": "array",
+            "title": "Concepts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concept_file_name",
+          "concepts"
+        ],
+        "title": "ConceptsSettings"
+      },
+      "ConfigPartValue": {
+        "type": "string",
+        "enum": [
+          "NONE",
+          "SETTINGS",
+          "ALL"
+        ],
+        "title": "ConfigPartValue"
+      },
+      "DataConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DataSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "DataConfigResponse"
+      },
+      "DataSettings": {
+        "properties": {
+          "aspect_ratio_bucketing": {
+            "type": "boolean",
+            "title": "Aspect Ratio Bucketing"
+          },
+          "latent_caching": {
+            "type": "boolean",
+            "title": "Latent Caching"
+          },
+          "clear_cache_before_training": {
+            "type": "boolean",
+            "title": "Clear Cache Before Training"
+          }
+        },
+        "type": "object",
+        "required": [
+          "aspect_ratio_bucketing",
+          "latent_caching",
+          "clear_cache_before_training"
+        ],
+        "title": "DataSettings"
+      },
+      "DataTypeValue": {
+        "type": "string",
+        "enum": [
+          "NONE",
+          "FLOAT_8",
+          "FLOAT_16",
+          "FLOAT_32",
+          "BFLOAT_16",
+          "TFLOAT_32",
+          "INT_8",
+          "NFLOAT_4",
+          "FLOAT_W8A8",
+          "INT_W8A8",
+          "GGUF",
+          "GGUF_A8_FLOAT",
+          "GGUF_A8_INT"
+        ],
+        "title": "DataTypeValue"
+      },
+      "EMAModeValue": {
+        "type": "string",
+        "enum": [
+          "OFF",
+          "GPU",
+          "CPU"
+        ],
+        "title": "EMAModeValue"
+      },
+      "GeneralConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GeneralSettings"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/GeneralMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "GeneralConfigResponse"
+      },
+      "GeneralMeta": {
+        "properties": {
+          "validate_after_units": {
+            "items": {
+              "$ref": "#/components/schemas/TimeUnitValue"
+            },
+            "type": "array",
+            "title": "Validate After Units"
+          },
+          "gradient_reduce_precisions": {
+            "items": {
+              "$ref": "#/components/schemas/GradientReducePrecisionValue"
+            },
+            "type": "array",
+            "title": "Gradient Reduce Precisions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "validate_after_units",
+          "gradient_reduce_precisions"
+        ],
+        "title": "GeneralMeta"
+      },
+      "GeneralSettings": {
+        "properties": {
+          "workspace_dir": {
+            "type": "string",
+            "title": "Workspace Dir"
+          },
+          "cache_dir": {
+            "type": "string",
+            "title": "Cache Dir"
+          },
+          "continue_last_backup": {
+            "type": "boolean",
+            "title": "Continue Last Backup"
+          },
+          "only_cache": {
+            "type": "boolean",
+            "title": "Only Cache"
+          },
+          "debug_mode": {
+            "type": "boolean",
+            "title": "Debug Mode"
+          },
+          "debug_dir": {
+            "type": "string",
+            "title": "Debug Dir"
+          },
+          "tensorboard": {
+            "type": "boolean",
+            "title": "Tensorboard"
+          },
+          "tensorboard_always_on": {
+            "type": "boolean",
+            "title": "Tensorboard Always On"
+          },
+          "tensorboard_expose": {
+            "type": "boolean",
+            "title": "Tensorboard Expose"
+          },
+          "tensorboard_port": {
+            "type": "integer",
+            "maximum": 65535.0,
+            "minimum": 1.0,
+            "title": "Tensorboard Port"
+          },
+          "validation": {
+            "type": "boolean",
+            "title": "Validation"
+          },
+          "validate_after": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Validate After"
+          },
+          "validate_after_unit": {
+            "$ref": "#/components/schemas/TimeUnitValue"
+          },
+          "dataloader_threads": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Dataloader Threads"
+          },
+          "train_device": {
+            "type": "string",
+            "title": "Train Device"
+          },
+          "multi_gpu": {
+            "type": "boolean",
+            "title": "Multi Gpu"
+          },
+          "device_indexes": {
+            "type": "string",
+            "title": "Device Indexes"
+          },
+          "gradient_reduce_precision": {
+            "$ref": "#/components/schemas/GradientReducePrecisionValue"
+          },
+          "fused_gradient_reduce": {
+            "type": "boolean",
+            "title": "Fused Gradient Reduce"
+          },
+          "async_gradient_reduce": {
+            "type": "boolean",
+            "title": "Async Gradient Reduce"
+          },
+          "async_gradient_reduce_buffer": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Async Gradient Reduce Buffer"
+          },
+          "temp_device": {
+            "type": "string",
+            "title": "Temp Device"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workspace_dir",
+          "cache_dir",
+          "continue_last_backup",
+          "only_cache",
+          "debug_mode",
+          "debug_dir",
+          "tensorboard",
+          "tensorboard_always_on",
+          "tensorboard_expose",
+          "tensorboard_port",
+          "validation",
+          "validate_after",
+          "validate_after_unit",
+          "dataloader_threads",
+          "train_device",
+          "multi_gpu",
+          "device_indexes",
+          "gradient_reduce_precision",
+          "fused_gradient_reduce",
+          "async_gradient_reduce",
+          "async_gradient_reduce_buffer",
+          "temp_device"
+        ],
+        "title": "GeneralSettings"
+      },
+      "GradientCheckpointingMethodValue": {
+        "type": "string",
+        "enum": [
+          "OFF",
+          "ON",
+          "CPU_OFFLOADED"
+        ],
+        "title": "GradientCheckpointingMethodValue"
+      },
+      "GradientReducePrecisionValue": {
+        "type": "string",
+        "enum": [
+          "WEIGHT_DTYPE",
+          "FLOAT_32",
+          "WEIGHT_DTYPE_STOCHASTIC",
+          "FLOAT_32_STOCHASTIC"
+        ],
+        "title": "GradientReducePrecisionValue"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageFormatValue": {
+        "type": "string",
+        "enum": [
+          "PNG",
+          "JPG"
+        ],
+        "title": "ImageFormatValue"
+      },
+      "LearningRateScalerValue": {
+        "type": "string",
+        "enum": [
+          "NONE",
+          "BATCH",
+          "GLOBAL_BATCH",
+          "GRADIENT_ACCUMULATION",
+          "BOTH",
+          "GLOBAL_BOTH"
+        ],
+        "title": "LearningRateScalerValue"
+      },
+      "LearningRateSchedulerValue": {
+        "type": "string",
+        "enum": [
+          "CONSTANT",
+          "LINEAR",
+          "COSINE",
+          "COSINE_WITH_RESTARTS",
+          "COSINE_WITH_HARD_RESTARTS",
+          "REX",
+          "ADAFACTOR",
+          "CUSTOM"
+        ],
+        "title": "LearningRateSchedulerValue"
+      },
+      "LoraConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/LoraSettings"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/LoraMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "LoraConfigResponse"
+      },
+      "LoraMeta": {
+        "properties": {
+          "peft_types": {
+            "items": {
+              "$ref": "#/components/schemas/PeftTypeValue"
+            },
+            "type": "array",
+            "title": "Peft Types"
+          },
+          "lora_weight_dtypes": {
+            "items": {
+              "$ref": "#/components/schemas/DataTypeValue"
+            },
+            "type": "array",
+            "title": "Lora Weight Dtypes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "peft_types",
+          "lora_weight_dtypes"
+        ],
+        "title": "LoraMeta"
+      },
+      "LoraSettings": {
+        "properties": {
+          "peft_type": {
+            "$ref": "#/components/schemas/PeftTypeValue"
+          },
+          "lora_model_name": {
+            "type": "string",
+            "title": "Lora Model Name"
+          },
+          "lora_rank": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Lora Rank"
+          },
+          "lora_alpha": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Lora Alpha"
+          },
+          "lora_decompose": {
+            "type": "boolean",
+            "title": "Lora Decompose"
+          },
+          "lora_decompose_norm_epsilon": {
+            "type": "boolean",
+            "title": "Lora Decompose Norm Epsilon"
+          },
+          "lora_decompose_output_axis": {
+            "type": "boolean",
+            "title": "Lora Decompose Output Axis"
+          },
+          "lora_weight_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "bundle_additional_embeddings": {
+            "type": "boolean",
+            "title": "Bundle Additional Embeddings"
+          },
+          "dropout_probability": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Dropout Probability"
+          },
+          "oft_block_size": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Oft Block Size"
+          },
+          "oft_coft": {
+            "type": "boolean",
+            "title": "Oft Coft"
+          },
+          "coft_eps": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Coft Eps"
+          },
+          "oft_block_share": {
+            "type": "boolean",
+            "title": "Oft Block Share"
+          }
+        },
+        "type": "object",
+        "required": [
+          "peft_type",
+          "lora_model_name",
+          "lora_rank",
+          "lora_alpha",
+          "lora_decompose",
+          "lora_decompose_norm_epsilon",
+          "lora_decompose_output_axis",
+          "lora_weight_dtype",
+          "bundle_additional_embeddings",
+          "dropout_probability",
+          "oft_block_size",
+          "oft_coft",
+          "coft_eps",
+          "oft_block_share"
+        ],
+        "title": "LoraSettings"
+      },
+      "ModelConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ModelSettings-Output"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ModelMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ModelConfigResponse"
+      },
+      "ModelFormatValue": {
+        "type": "string",
+        "enum": [
+          "DIFFUSERS",
+          "CKPT",
+          "SAFETENSORS",
+          "LEGACY_SAFETENSORS",
+          "COMFY_LORA",
+          "INTERNAL"
+        ],
+        "title": "ModelFormatValue"
+      },
+      "ModelMeta": {
+        "properties": {
+          "training_methods": {
+            "items": {
+              "$ref": "#/components/schemas/TrainingMethodValue"
+            },
+            "type": "array",
+            "title": "Training Methods"
+          },
+          "model_types": {
+            "items": {
+              "$ref": "#/components/schemas/ModelTypeValue"
+            },
+            "type": "array",
+            "title": "Model Types"
+          },
+          "data_types": {
+            "items": {
+              "$ref": "#/components/schemas/DataTypeValue"
+            },
+            "type": "array",
+            "title": "Data Types"
+          },
+          "output_dtypes": {
+            "items": {
+              "$ref": "#/components/schemas/DataTypeValue"
+            },
+            "type": "array",
+            "title": "Output Dtypes"
+          },
+          "model_formats": {
+            "items": {
+              "$ref": "#/components/schemas/ModelFormatValue"
+            },
+            "type": "array",
+            "title": "Model Formats"
+          },
+          "include_train_configs": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigPartValue"
+            },
+            "type": "array",
+            "title": "Include Train Configs"
+          },
+          "quantization_presets": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Quantization Presets"
+          }
+        },
+        "type": "object",
+        "required": [
+          "training_methods",
+          "model_types",
+          "data_types",
+          "output_dtypes",
+          "model_formats",
+          "include_train_configs",
+          "quantization_presets"
+        ],
+        "title": "ModelMeta"
+      },
+      "ModelPartSettings": {
+        "properties": {
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "weight_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_name",
+          "weight_dtype"
+        ],
+        "title": "ModelPartSettings"
+      },
+      "ModelSettings-Input": {
+        "properties": {
+          "training_method": {
+            "$ref": "#/components/schemas/TrainingMethodValue"
+          },
+          "model_type": {
+            "$ref": "#/components/schemas/ModelTypeValue"
+          },
+          "huggingface_token": {
+            "type": "string",
+            "title": "Huggingface Token"
+          },
+          "base_model_name": {
+            "type": "string",
+            "title": "Base Model Name"
+          },
+          "compile": {
+            "type": "boolean",
+            "title": "Compile"
+          },
+          "unet": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "prior": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "transformer": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_2": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_3": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_4": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "vae": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "effnet_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder_text_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder_vqgan": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "quantization": {
+            "$ref": "#/components/schemas/QuantizationSettings"
+          },
+          "output_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "output_model_format": {
+            "$ref": "#/components/schemas/ModelFormatValue"
+          },
+          "output_model_destination": {
+            "type": "string",
+            "title": "Output Model Destination"
+          },
+          "include_train_config": {
+            "$ref": "#/components/schemas/ConfigPartValue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "training_method",
+          "model_type",
+          "huggingface_token",
+          "base_model_name",
+          "compile",
+          "unet",
+          "prior",
+          "transformer",
+          "text_encoder",
+          "text_encoder_2",
+          "text_encoder_3",
+          "text_encoder_4",
+          "vae",
+          "effnet_encoder",
+          "decoder",
+          "decoder_text_encoder",
+          "decoder_vqgan",
+          "quantization",
+          "output_dtype",
+          "output_model_format",
+          "output_model_destination",
+          "include_train_config"
+        ],
+        "title": "ModelSettings"
+      },
+      "ModelSettings-Output": {
+        "properties": {
+          "training_method": {
+            "$ref": "#/components/schemas/TrainingMethodValue"
+          },
+          "model_type": {
+            "$ref": "#/components/schemas/ModelTypeValue"
+          },
+          "huggingface_token": {
+            "type": "string",
+            "title": "Huggingface Token"
+          },
+          "base_model_name": {
+            "type": "string",
+            "title": "Base Model Name"
+          },
+          "compile": {
+            "type": "boolean",
+            "title": "Compile"
+          },
+          "unet": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "prior": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "transformer": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_2": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_3": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "text_encoder_4": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "vae": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "effnet_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder_text_encoder": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "decoder_vqgan": {
+            "$ref": "#/components/schemas/ModelPartSettings"
+          },
+          "quantization": {
+            "$ref": "#/components/schemas/QuantizationSettings"
+          },
+          "output_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "output_model_format": {
+            "$ref": "#/components/schemas/ModelFormatValue"
+          },
+          "output_model_destination": {
+            "type": "string",
+            "title": "Output Model Destination"
+          },
+          "include_train_config": {
+            "$ref": "#/components/schemas/ConfigPartValue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "training_method",
+          "model_type",
+          "huggingface_token",
+          "base_model_name",
+          "compile",
+          "unet",
+          "prior",
+          "transformer",
+          "text_encoder",
+          "text_encoder_2",
+          "text_encoder_3",
+          "text_encoder_4",
+          "vae",
+          "effnet_encoder",
+          "decoder",
+          "decoder_text_encoder",
+          "decoder_vqgan",
+          "quantization",
+          "output_dtype",
+          "output_model_format",
+          "output_model_destination",
+          "include_train_config"
+        ],
+        "title": "ModelSettings"
+      },
+      "ModelTypeValue": {
+        "type": "string",
+        "enum": [
+          "STABLE_DIFFUSION_15",
+          "STABLE_DIFFUSION_15_INPAINTING",
+          "STABLE_DIFFUSION_20",
+          "STABLE_DIFFUSION_20_BASE",
+          "STABLE_DIFFUSION_20_INPAINTING",
+          "STABLE_DIFFUSION_20_DEPTH",
+          "STABLE_DIFFUSION_21",
+          "STABLE_DIFFUSION_21_BASE",
+          "STABLE_DIFFUSION_3",
+          "STABLE_DIFFUSION_35",
+          "STABLE_DIFFUSION_XL_10_BASE",
+          "STABLE_DIFFUSION_XL_10_BASE_INPAINTING",
+          "WUERSTCHEN_2",
+          "STABLE_CASCADE_1",
+          "PIXART_ALPHA",
+          "PIXART_SIGMA",
+          "FLUX_DEV_1",
+          "FLUX_FILL_DEV_1",
+          "FLUX_2",
+          "SANA",
+          "HUNYUAN_VIDEO",
+          "HI_DREAM_FULL",
+          "CHROMA_1",
+          "QWEN",
+          "Z_IMAGE"
+        ],
+        "title": "ModelTypeValue"
+      },
+      "NoiseSchedulerValue": {
+        "type": "string",
+        "enum": [
+          "DDIM",
+          "EULER",
+          "EULER_A",
+          "DPMPP",
+          "DPMPP_SDE",
+          "UNIPC",
+          "EULER_KARRAS",
+          "DPMPP_KARRAS",
+          "DPMPP_SDE_KARRAS",
+          "UNIPC_KARRAS"
+        ],
+        "title": "NoiseSchedulerValue"
+      },
+      "PeftTypeValue": {
+        "type": "string",
+        "enum": [
+          "LORA",
+          "LOHA",
+          "OFT_2"
+        ],
+        "title": "PeftTypeValue"
+      },
+      "QuantizationSettings": {
+        "properties": {
+          "layer_filter": {
+            "type": "string",
+            "title": "Layer Filter"
+          },
+          "layer_filter_preset": {
+            "type": "string",
+            "title": "Layer Filter Preset"
+          },
+          "layer_filter_regex": {
+            "type": "boolean",
+            "title": "Layer Filter Regex"
+          },
+          "svd_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "svd_rank": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Svd Rank"
+          }
+        },
+        "type": "object",
+        "required": [
+          "layer_filter",
+          "layer_filter_preset",
+          "layer_filter_regex",
+          "svd_dtype",
+          "svd_rank"
+        ],
+        "title": "QuantizationSettings"
+      },
+      "SamplingConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SamplingSettings-Output"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/SamplingMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "SamplingConfigResponse"
+      },
+      "SamplingMeta": {
+        "properties": {
+          "sample_after_units": {
+            "items": {
+              "$ref": "#/components/schemas/TimeUnitValue"
+            },
+            "type": "array",
+            "title": "Sample After Units"
+          },
+          "sample_image_formats": {
+            "items": {
+              "$ref": "#/components/schemas/ImageFormatValue"
+            },
+            "type": "array",
+            "title": "Sample Image Formats"
+          },
+          "sample_video_formats": {
+            "items": {
+              "$ref": "#/components/schemas/VideoFormatValue"
+            },
+            "type": "array",
+            "title": "Sample Video Formats"
+          },
+          "sample_audio_formats": {
+            "items": {
+              "$ref": "#/components/schemas/AudioFormatValue"
+            },
+            "type": "array",
+            "title": "Sample Audio Formats"
+          },
+          "noise_schedulers": {
+            "items": {
+              "$ref": "#/components/schemas/NoiseSchedulerValue"
+            },
+            "type": "array",
+            "title": "Noise Schedulers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sample_after_units",
+          "sample_image_formats",
+          "sample_video_formats",
+          "sample_audio_formats",
+          "noise_schedulers"
+        ],
+        "title": "SamplingMeta"
+      },
+      "SamplingSampleSettings": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "negative_prompt": {
+            "type": "string",
+            "title": "Negative Prompt"
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Height"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Width"
+          },
+          "frames": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Frames"
+          },
+          "length": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Length"
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed"
+          },
+          "random_seed": {
+            "type": "boolean",
+            "title": "Random Seed"
+          },
+          "diffusion_steps": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Diffusion Steps"
+          },
+          "cfg_scale": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Cfg Scale"
+          },
+          "noise_scheduler": {
+            "$ref": "#/components/schemas/NoiseSchedulerValue"
+          },
+          "text_encoder_1_layer_skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Text Encoder 1 Layer Skip"
+          },
+          "text_encoder_1_sequence_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Encoder 1 Sequence Length"
+          },
+          "text_encoder_2_layer_skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Text Encoder 2 Layer Skip"
+          },
+          "text_encoder_2_sequence_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Encoder 2 Sequence Length"
+          },
+          "text_encoder_3_layer_skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Text Encoder 3 Layer Skip"
+          },
+          "text_encoder_4_layer_skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Text Encoder 4 Layer Skip"
+          },
+          "transformer_attention_mask": {
+            "type": "boolean",
+            "title": "Transformer Attention Mask"
+          },
+          "force_last_timestep": {
+            "type": "boolean",
+            "title": "Force Last Timestep"
+          },
+          "sample_inpainting": {
+            "type": "boolean",
+            "title": "Sample Inpainting"
+          },
+          "base_image_path": {
+            "type": "string",
+            "title": "Base Image Path"
+          },
+          "mask_image_path": {
+            "type": "string",
+            "title": "Mask Image Path"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "enabled",
+          "prompt",
+          "negative_prompt",
+          "height",
+          "width",
+          "frames",
+          "length",
+          "seed",
+          "random_seed",
+          "diffusion_steps",
+          "cfg_scale",
+          "noise_scheduler",
+          "text_encoder_1_layer_skip",
+          "text_encoder_2_layer_skip",
+          "text_encoder_3_layer_skip",
+          "text_encoder_4_layer_skip",
+          "transformer_attention_mask",
+          "force_last_timestep",
+          "sample_inpainting",
+          "base_image_path",
+          "mask_image_path"
+        ],
+        "title": "SamplingSampleSettings"
+      },
+      "SamplingSettings-Input": {
+        "properties": {
+          "sample_definition_file_name": {
+            "type": "string",
+            "title": "Sample Definition File Name"
+          },
+          "sample_after": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Sample After"
+          },
+          "sample_after_unit": {
+            "$ref": "#/components/schemas/TimeUnitValue"
+          },
+          "sample_skip_first": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Sample Skip First"
+          },
+          "sample_image_format": {
+            "$ref": "#/components/schemas/ImageFormatValue"
+          },
+          "sample_video_format": {
+            "$ref": "#/components/schemas/VideoFormatValue"
+          },
+          "sample_audio_format": {
+            "$ref": "#/components/schemas/AudioFormatValue"
+          },
+          "samples_to_tensorboard": {
+            "type": "boolean",
+            "title": "Samples To Tensorboard"
+          },
+          "non_ema_sampling": {
+            "type": "boolean",
+            "title": "Non Ema Sampling"
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/SamplingSampleSettings"
+            },
+            "type": "array",
+            "title": "Samples"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sample_definition_file_name",
+          "sample_after",
+          "sample_after_unit",
+          "sample_skip_first",
+          "sample_image_format",
+          "sample_video_format",
+          "sample_audio_format",
+          "samples_to_tensorboard",
+          "non_ema_sampling",
+          "samples"
+        ],
+        "title": "SamplingSettings"
+      },
+      "SamplingSettings-Output": {
+        "properties": {
+          "sample_definition_file_name": {
+            "type": "string",
+            "title": "Sample Definition File Name"
+          },
+          "sample_after": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Sample After"
+          },
+          "sample_after_unit": {
+            "$ref": "#/components/schemas/TimeUnitValue"
+          },
+          "sample_skip_first": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Sample Skip First"
+          },
+          "sample_image_format": {
+            "$ref": "#/components/schemas/ImageFormatValue"
+          },
+          "sample_video_format": {
+            "$ref": "#/components/schemas/VideoFormatValue"
+          },
+          "sample_audio_format": {
+            "$ref": "#/components/schemas/AudioFormatValue"
+          },
+          "samples_to_tensorboard": {
+            "type": "boolean",
+            "title": "Samples To Tensorboard"
+          },
+          "non_ema_sampling": {
+            "type": "boolean",
+            "title": "Non Ema Sampling"
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/SamplingSampleSettings"
+            },
+            "type": "array",
+            "title": "Samples"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sample_definition_file_name",
+          "sample_after",
+          "sample_after_unit",
+          "sample_skip_first",
+          "sample_image_format",
+          "sample_video_format",
+          "sample_audio_format",
+          "samples_to_tensorboard",
+          "non_ema_sampling",
+          "samples"
+        ],
+        "title": "SamplingSettings"
+      },
+      "SaveBackupConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BackupSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveBackupConfigRequest"
+      },
+      "SaveConceptsConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ConceptsSettings-Input"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveConceptsConfigRequest"
+      },
+      "SaveDataConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DataSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveDataConfigRequest"
+      },
+      "SaveGeneralConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GeneralSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveGeneralConfigRequest"
+      },
+      "SaveLoraConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/LoraSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveLoraConfigRequest"
+      },
+      "SaveModelConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ModelSettings-Input"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveModelConfigRequest"
+      },
+      "SaveSamplingConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SamplingSettings-Input"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveSamplingConfigRequest"
+      },
+      "SaveTrainingConfigRequest": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TrainingSettings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "SaveTrainingConfigRequest"
+      },
+      "TimeUnitValue": {
+        "type": "string",
+        "enum": [
+          "EPOCH",
+          "STEP",
+          "SECOND",
+          "MINUTE",
+          "HOUR",
+          "NEVER",
+          "ALWAYS"
+        ],
+        "title": "TimeUnitValue"
+      },
+      "ToolActionTypeValue": {
+        "type": "string",
+        "enum": [
+          "WEB_LINK",
+          "CLI_COMMAND",
+          "INFO"
+        ],
+        "title": "ToolActionTypeValue"
+      },
+      "ToolInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "action_type": {
+            "$ref": "#/components/schemas/ToolActionTypeValue"
+          },
+          "action_value": {
+            "type": "string",
+            "title": "Action Value"
+          },
+          "desktop_equivalent": {
+            "type": "boolean",
+            "title": "Desktop Equivalent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "action_type",
+          "action_value",
+          "desktop_equivalent"
+        ],
+        "title": "ToolInfo"
+      },
+      "ToolsConfigResponse": {
+        "properties": {
+          "data": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/ToolInfo"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ToolsConfigResponse"
+      },
+      "TrainingConfigResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TrainingSettings"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TrainingMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "TrainingConfigResponse"
+      },
+      "TrainingMeta": {
+        "properties": {
+          "optimizers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Optimizers"
+          },
+          "learning_rate_schedulers": {
+            "items": {
+              "$ref": "#/components/schemas/LearningRateSchedulerValue"
+            },
+            "type": "array",
+            "title": "Learning Rate Schedulers"
+          },
+          "learning_rate_scalers": {
+            "items": {
+              "$ref": "#/components/schemas/LearningRateScalerValue"
+            },
+            "type": "array",
+            "title": "Learning Rate Scalers"
+          },
+          "ema_modes": {
+            "items": {
+              "$ref": "#/components/schemas/EMAModeValue"
+            },
+            "type": "array",
+            "title": "Ema Modes"
+          },
+          "gradient_checkpointing_methods": {
+            "items": {
+              "$ref": "#/components/schemas/GradientCheckpointingMethodValue"
+            },
+            "type": "array",
+            "title": "Gradient Checkpointing Methods"
+          },
+          "train_dtypes": {
+            "items": {
+              "$ref": "#/components/schemas/DataTypeValue"
+            },
+            "type": "array",
+            "title": "Train Dtypes"
+          },
+          "fallback_train_dtypes": {
+            "items": {
+              "$ref": "#/components/schemas/DataTypeValue"
+            },
+            "type": "array",
+            "title": "Fallback Train Dtypes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "optimizers",
+          "learning_rate_schedulers",
+          "learning_rate_scalers",
+          "ema_modes",
+          "gradient_checkpointing_methods",
+          "train_dtypes",
+          "fallback_train_dtypes"
+        ],
+        "title": "TrainingMeta"
+      },
+      "TrainingMethodValue": {
+        "type": "string",
+        "enum": [
+          "FINE_TUNE",
+          "LORA",
+          "EMBEDDING",
+          "FINE_TUNE_VAE"
+        ],
+        "title": "TrainingMethodValue"
+      },
+      "TrainingSettings": {
+        "properties": {
+          "optimizer": {
+            "type": "string",
+            "title": "Optimizer"
+          },
+          "learning_rate_scheduler": {
+            "$ref": "#/components/schemas/LearningRateSchedulerValue"
+          },
+          "learning_rate": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Learning Rate"
+          },
+          "learning_rate_warmup_steps": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Learning Rate Warmup Steps"
+          },
+          "learning_rate_min_factor": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Learning Rate Min Factor"
+          },
+          "learning_rate_cycles": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Learning Rate Cycles"
+          },
+          "epochs": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Epochs"
+          },
+          "batch_size": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Batch Size"
+          },
+          "gradient_accumulation_steps": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Gradient Accumulation Steps"
+          },
+          "learning_rate_scaler": {
+            "$ref": "#/components/schemas/LearningRateScalerValue"
+          },
+          "clip_grad_norm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clip Grad Norm"
+          },
+          "ema": {
+            "$ref": "#/components/schemas/EMAModeValue"
+          },
+          "ema_decay": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Ema Decay"
+          },
+          "ema_update_step_interval": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Ema Update Step Interval"
+          },
+          "gradient_checkpointing": {
+            "$ref": "#/components/schemas/GradientCheckpointingMethodValue"
+          },
+          "layer_offload_fraction": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Layer Offload Fraction"
+          },
+          "train_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "fallback_train_dtype": {
+            "$ref": "#/components/schemas/DataTypeValue"
+          },
+          "enable_autocast_cache": {
+            "type": "boolean",
+            "title": "Enable Autocast Cache"
+          },
+          "resolution": {
+            "type": "string",
+            "title": "Resolution"
+          },
+          "force_circular_padding": {
+            "type": "boolean",
+            "title": "Force Circular Padding"
+          }
+        },
+        "type": "object",
+        "required": [
+          "optimizer",
+          "learning_rate_scheduler",
+          "learning_rate",
+          "learning_rate_warmup_steps",
+          "learning_rate_min_factor",
+          "learning_rate_cycles",
+          "epochs",
+          "batch_size",
+          "gradient_accumulation_steps",
+          "learning_rate_scaler",
+          "ema",
+          "ema_decay",
+          "ema_update_step_interval",
+          "gradient_checkpointing",
+          "layer_offload_fraction",
+          "train_dtype",
+          "fallback_train_dtype",
+          "enable_autocast_cache",
+          "resolution",
+          "force_circular_padding"
+        ],
+        "title": "TrainingSettings"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VideoFormatValue": {
+        "type": "string",
+        "enum": [
+          "PNG_IMAGE_SEQUENCE",
+          "JPG_IMAGE_SEQUENCE",
+          "MP4"
+        ],
+        "title": "VideoFormatValue"
+      }
+    }
+  }
+}
