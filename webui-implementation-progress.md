@@ -622,3 +622,22 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Training mapper/service split)
+
+### Implemented in this session (Refactor Step 3 continuation)
+- Backend (`apps/api`):
+  - Added `apps/api/app/mappers/training.py` and moved training tab mapping logic (`to_training_settings`, `apply_training_settings`).
+  - Added `apps/api/app/services/training_service.py` and moved training tab orchestration (`load -> map -> meta`, `apply -> save -> map -> meta`).
+  - Updated `apps/api/app/routes/training.py` to thin route handlers that delegate to service functions.
+- API contract stability:
+  - Preserved endpoint path and response shape for `GET/POST /api/v1/training-config`.
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
