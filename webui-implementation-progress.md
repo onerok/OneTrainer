@@ -641,3 +641,28 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Sampling/Concepts/Tools service extraction)
+
+### Implemented in this session (Refactor Step 3 continuation)
+- Backend (`apps/api`):
+  - Added `apps/api/app/mappers/sampling.py` and `apps/api/app/services/sampling_service.py`.
+  - Updated `apps/api/app/routes/sampling.py` to thin route handlers.
+  - Added `apps/api/app/mappers/concepts.py` and `apps/api/app/services/concepts_service.py`.
+  - Updated `apps/api/app/routes/concepts.py` to thin route handlers.
+  - Added `apps/api/app/services/tools_service.py`.
+  - Updated `apps/api/app/routes/tools.py` to thin route handler delegating to service.
+- API contract stability:
+  - Preserved endpoint paths and response shapes for:
+    - `GET/POST /api/v1/sampling-config`
+    - `GET/POST /api/v1/concepts-config`
+    - `GET /api/v1/tools-config`
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- OpenAPI generation:
+  - `npm --prefix apps/web run gen:api`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
