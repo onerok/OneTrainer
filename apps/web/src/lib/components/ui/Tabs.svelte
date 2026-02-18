@@ -1,20 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { TAB_ROUTES, type AppRoute } from '../../../app/routes';
 
   export let activeTab = 'general';
+  export let tabs: AppRoute[] = TAB_ROUTES;
   const dispatch = createEventDispatcher<{ change: { tabId: string } }>();
-
-  const tabs = [
-    { id: 'general', label: 'General', disabled: false },
-    { id: 'model', label: 'Model', disabled: false },
-    { id: 'lora', label: 'LoRA', disabled: false },
-    { id: 'data', label: 'Data', disabled: false },
-    { id: 'concepts', label: 'Concepts', disabled: false },
-    { id: 'training', label: 'Training', disabled: false },
-    { id: 'sampling', label: 'Sampling', disabled: false },
-    { id: 'backup', label: 'Backup', disabled: false },
-    { id: 'tools', label: 'Tools', disabled: false }
-  ];
 
   function onTabClick(tabId: string, disabled: boolean) {
     if (disabled) {

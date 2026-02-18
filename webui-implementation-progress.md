@@ -666,3 +666,19 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Frontend AppShell extraction)
+
+### Implemented in this session (Refactor Step 4 start)
+- Frontend (`apps/web`):
+  - Added `apps/web/src/app/AppShell.svelte` and moved existing top-level app UI there with no UX/behavior change.
+  - Reduced `apps/web/src/App.svelte` to a thin wrapper that renders `AppShell`.
+  - Added `apps/web/src/app/routes.ts` with shared tab route definitions.
+  - Updated `apps/web/src/lib/components/ui/Tabs.svelte` to use the shared route registry (`TAB_ROUTES`) via props/default.
+
+### Validation run this session
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
+- Backend compile check:
+  - `python -m compileall apps/api/app`
