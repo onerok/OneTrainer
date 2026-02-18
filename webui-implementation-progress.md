@@ -809,3 +809,24 @@ Last updated: 2026-02-18
 - Frontend checks:
   - `npm --prefix apps/web run check`
   - `npm --prefix apps/web run build`
+
+## Session Update (2026-02-18, Env-configurable API runtime)
+
+### Implemented in this session
+- Backend (`apps/api`):
+  - Made API runtime settings env-configurable in `apps/api/app/core/settings.py`:
+    - `ONETRAINER_API_HOST`
+    - `ONETRAINER_API_PORT`
+    - `ONETRAINER_API_CORS_ORIGINS` (comma-separated)
+- Frontend (`apps/web`):
+  - Added `apps/web/.env.example` with `VITE_API_BASE_URL`.
+- Docs:
+  - Updated `apps/api/README.md` with backend env variable documentation.
+  - Updated `apps/web/README.md` to reference `.env.example` usage.
+
+### Validation run this session
+- Backend compile check:
+  - `python -m compileall apps/api/app`
+- Frontend checks:
+  - `npm --prefix apps/web run check`
+  - `npm --prefix apps/web run build`
