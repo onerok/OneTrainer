@@ -527,6 +527,7 @@ class TrainConfig(BaseConfig):
     lora_decompose_output_axis: bool
     lora_weight_dtype: DataType
     bundle_additional_embeddings: bool
+    trigger_word: str
 
     # oft
     oft_block_size: int
@@ -570,7 +571,7 @@ class TrainConfig(BaseConfig):
     def __init__(self, data: list[(str, Any, type, bool)]):
         super().__init__(
             data,
-            config_version=10,
+            config_version=11,
             config_migrations={
                 0: self.__migration_0,
                 1: self.__migration_1,
@@ -582,6 +583,7 @@ class TrainConfig(BaseConfig):
                 7: self.__migration_7,
                 8: self.__migration_8,
                 9: self.__migration_9,
+                10: self.__migration_10,
             }
         )
 
@@ -800,6 +802,9 @@ class TrainConfig(BaseConfig):
         migrated_data.pop("weight_dtype")
 
         return migrated_data
+
+    def __migration_10(self, data: dict) -> dict:
+        return data
 
     def weight_dtypes(self) -> ModelWeightDtypes:
         return ModelWeightDtypes(
@@ -1157,6 +1162,7 @@ class TrainConfig(BaseConfig):
         data.append(("lora_decompose_output_axis", False, bool, False))
         data.append(("lora_weight_dtype", DataType.FLOAT_32, DataType, False))
         data.append(("bundle_additional_embeddings", True, bool, False))
+        data.append(("trigger_word", "", str, False))
 
         # oft
         data.append(("oft_block_size", 32, int, False))

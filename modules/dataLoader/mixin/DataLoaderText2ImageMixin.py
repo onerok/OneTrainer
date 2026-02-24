@@ -32,6 +32,7 @@ from mgds.pipelineModules.InlineDistributedSampler import InlineDistributedSampl
 from mgds.pipelineModules.LoadImage import LoadImage
 from mgds.pipelineModules.LoadMultipleTexts import LoadMultipleTexts
 from mgds.pipelineModules.LoadVideo import LoadVideo
+from mgds.pipelineModules.MapData import MapData
 from mgds.pipelineModules.ModifyPath import ModifyPath
 from mgds.pipelineModules.RandomBrightness import RandomBrightness
 from mgds.pipelineModules.RandomCircularMaskShrink import RandomCircularMaskShrink
@@ -227,6 +228,10 @@ class DataLoaderText2ImageMixin(metaclass=ABCMeta):
         random_hue = RandomHue(names=image_inputs, enabled_in_name='concept.image.enable_random_hue', fixed_enabled_in_name='concept.image.enable_fixed_hue', max_strength_in_name='concept.image.random_hue_max_strength')
 
         # text augmentations
+        replace_trigger = MapData(
+            in_name='prompt', out_name='prompt',
+            map_fn=lambda prompt: prompt.replace("[trigger]", config.trigger_word) if config.trigger_word else prompt,
+        )
         drop_tags = DropTags(text_in_name='prompt', enabled_in_name='concept.text.tag_dropout_enable', probability_in_name='concept.text.tag_dropout_probability', dropout_mode_in_name='concept.text.tag_dropout_mode',
                              special_tags_in_name='concept.text.tag_dropout_special_tags', special_tag_mode_in_name='concept.text.tag_dropout_special_tags_mode', delimiter_in_name='concept.text.tag_delimiter',
                              keep_tags_count_in_name='concept.text.keep_tags_count', text_out_name='prompt', regex_enabled_in_name='concept.text.tag_dropout_special_tags_regex')
@@ -241,6 +246,7 @@ class DataLoaderText2ImageMixin(metaclass=ABCMeta):
             random_contrast,
             random_saturation,
             random_hue,
+            replace_trigger,
             drop_tags,
             caps_randomize,
             shuffle_tags,

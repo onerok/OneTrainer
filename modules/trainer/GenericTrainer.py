@@ -259,6 +259,9 @@ class GenericTrainer(BaseTrainer):
                 sample_config = copy.copy(sample_config)
                 sample_config.from_train_config(self.config)
 
+                if self.config.trigger_word:
+                    sample_config.prompt = sample_config.prompt.replace("[trigger]", self.config.trigger_word)
+
                 self.model_sampler.sample(
                     sample_config=sample_config,
                     destination=sample_path,

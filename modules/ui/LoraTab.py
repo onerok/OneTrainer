@@ -152,3 +152,8 @@ class LoraTab:
             components.label(master, 4, 0, "Bundle Embeddings",
                             tooltip=f"Bundles any additional embeddings into the {name} output file, rather than as separate files")
             components.switch(master, 4, 1, self.ui_state, "bundle_additional_embeddings")
+
+        # trigger word (common to all peft types)
+        components.label(master, 6, 0, "Trigger Word",
+                         tooltip="Replaces [trigger] in captions and sample prompts with this word during training. Leave empty to disable.")
+        components.entry(master, 6, 1, self.ui_state, "trigger_word")
