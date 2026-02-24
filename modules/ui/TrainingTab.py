@@ -682,6 +682,11 @@ class TrainingTab:
                              tooltip="Dynamically shift the timestep distribution based on resolution. If enabled, the shifting parameters are taken from the model's scheduler configuration and Timestep Shift is ignored. Note: For Z-Image and Flux2, the dynamic shifting parameters are likely wrong and unknown. Use with care or set your own, fixed shift.", wide_tooltip=True)
             components.switch(frame, 9, 1, self.ui_state, "dynamic_timestep_shifting")
 
+        # progressive timestep distribution
+        components.label(frame, 10, 0, "Progressive Timestep Distribution",
+                         tooltip="Gradually transitions from Uniform distribution to the selected distribution over the course of training. Helps stabilizing early training.")
+        components.switch(frame, 10, 1, self.ui_state, "progressive_timestep_distribution")
+
 
 
     def __create_masked_frame(self, master, row):
