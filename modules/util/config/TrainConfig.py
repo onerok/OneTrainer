@@ -529,6 +529,9 @@ class TrainConfig(BaseConfig):
     bundle_additional_embeddings: bool
     trigger_word: str
 
+    # lokr
+    lokr_factor: int
+
     # oft
     oft_block_size: int
     oft_coft: bool
@@ -1163,6 +1166,9 @@ class TrainConfig(BaseConfig):
         data.append(("lora_weight_dtype", DataType.FLOAT_32, DataType, False))
         data.append(("bundle_additional_embeddings", True, bool, False))
         data.append(("trigger_word", "", str, False))
+
+        # lokr
+        data.append(("lokr_factor", -1, int, False))
 
         # oft
         data.append(("oft_block_size", 32, int, False))

@@ -38,12 +38,15 @@ class LoraTab:
         components.options_kv(self.scroll_frame, 0, 1, [
             ("LoRA", PeftType.LORA),
             ("LoHa", PeftType.LOHA),
+            ("LoKr", PeftType.LOKR),
             ("OFT v2", PeftType.OFT_2),
         ], self.ui_state, "peft_type", command=self.setup_lora)
 
     def setup_lora(self, peft_type: PeftType):
         if peft_type == PeftType.LOHA:
             name = "LoHa"
+        elif peft_type == PeftType.LOKR:
+            name = "LoKr"
         elif peft_type == PeftType.OFT_2:
             name = "OFT v2"
         else:
@@ -84,8 +87,8 @@ class LoraTab:
                              tooltip="Apply the weight decomposition on the output axis instead of the input axis.")
             components.switch(master, 3, 4, self.ui_state, "lora_decompose_output_axis")
 
-        # LoRA and LoHA shared settings
-        if peft_type == PeftType.LORA or peft_type == PeftType.LOHA:
+        # LoRA, LoHA, LoKr shared settings
+        if peft_type in [PeftType.LORA, PeftType.LOHA, PeftType.LOKR]:
             # rank
             components.label(master, 1, 0, f"{name} rank",
                             tooltip=f"The rank parameter used when creating a new {name}")
@@ -113,6 +116,12 @@ class LoraTab:
             components.label(master, 5, 0, "Bundle Embeddings",
                             tooltip=f"Bundles any additional embeddings into the {name} output file, rather than as separate files")
             components.switch(master, 5, 1, self.ui_state, "bundle_additional_embeddings")
+            
+            # LoKr specific
+            if peft_type == PeftType.LOKR:
+                 components.label(master, 1, 3, "Factor",
+                                 tooltip="LoKr Factor. -1 for automatic.")
+                 components.entry(master, 1, 4, self.ui_state, "lokr_factor")
 
         # OFTv2
         elif peft_type == PeftType.OFT_2:
