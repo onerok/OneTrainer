@@ -1,0 +1,79 @@
+{
+    "base_model_name": "Tongyi-MAI/Z-Image",
+    "model_type": "Z_IMAGE",
+    "training_method": "LORA",
+    "peft_type": "LORA",
+    "lora_rank": 64,
+    "lora_alpha": 64.0,
+    "lora_weight_dtype": "FLOAT_32",
+    "layer_filter": "^(?=.*attention)(?!.*refiner).*,^(?=.*feed_forward)(?!.*refiner).*",
+    "layer_filter_preset": "attn-mlp",
+    "layer_filter_regex": true,
+
+    "epochs": 120,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "resolution": "1024",
+
+    "train_dtype": "BFLOAT_16",
+    "weight_dtype": "BFLOAT_16",
+    "output_dtype": "BFLOAT_16",
+    "output_model_format": "SAFETENSORS",
+
+    "transformer": {
+        "train": true,
+        "weight_dtype": "BFLOAT_16"
+    },
+    "text_encoder": {
+        "train": false,
+        "weight_dtype": "FLOAT_8"
+    },
+    "vae": {
+        "weight_dtype": "FLOAT_32"
+    },
+
+    "learning_rate": 1.0,
+    "learning_rate_scheduler": "CONSTANT",
+    "learning_rate_warmup_steps": 50.0,
+
+    "optimizer": {
+        "optimizer": "PRODIGY_ADV",
+        "beta1": 0.9,
+        "beta2": 0.99,
+        "d0": 1e-06,
+        "eps": 1e-08,
+        "weight_decay": 0.0,
+        "weight_decay_by_lr": true,
+        "stochastic_rounding": true,
+        "use_stableadamw": true,
+        "use_schedulefree": true,
+        "factored": true,
+        "factored_fp32": true,
+        "split_groups": true,
+        "split_groups_mean": true,
+        "rms_rescaling": true,
+        "fused": true
+    },
+
+    "gradient_reduce_precision": "FLOAT_32_STOCHASTIC",
+    "clip_grad_norm": 1.0,
+    "gradient_checkpointing": "ON",
+
+    "loss_weight_fn": "MIN_SNR_GAMMA",
+    "loss_weight_strength": 5.0,
+
+    "timestep_distribution": "LOGIT_NORMAL",
+    "dynamic_timestep_shifting": true,
+    "progressive_timestep_distribution": true,
+
+    "aspect_ratio_bucketing": true,
+    "latent_caching": true,
+    "clear_cache_before_training": true,
+    "compile": true,
+    "dataloader_threads": 1,
+
+    "backup_after": 5,
+    "backup_after_unit": "EPOCH",
+    "sample_after": 5,
+    "sample_after_unit": "EPOCH"
+}

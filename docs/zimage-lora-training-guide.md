@@ -2,6 +2,8 @@
 
 > Community-aggregated guide for training LoRAs on Z-Image Base (ZiB) and Z-Image Turbo (ZiT).
 > Compiled February 2026 from community sources listed in [Sources](#sources).
+>
+> **This repo note**: Several features originally from the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) have been cherry-picked into this repo (see [docs/gesen2egee-fork-cherry-picks.md](gesen2egee-fork-cherry-picks.md)). Where this guide says "fork only", those features are now available here too. Credit for these features belongs entirely to gesen2egee — we are consumers, not maintainers, of that code. If the cherry-picks fall behind or break, the gesen2egee fork remains the authoritative source.
 
 ---
 
@@ -41,7 +43,7 @@
 
 **Critical fact**: ZiB was updated *after* ZiT was released. This means the two models have diverged and **ZiB-trained LoRAs do not work cleanly on ZiT's base weights** (though many users report success with adjustments -- see [ZiB LoRAs on ZiT](#zib-loras-on-zit)).
 
-> **Codebase note**: Z-Image uses flow-matching losses internally (`_flow_matching_losses`) but `ModelType.Z_IMAGE.is_flow_matching()` returns `False` in the OneTrainer enum. This classification inconsistency affects which UI options are shown (e.g., MIN_SNR_GAMMA appears selectable but will crash at runtime on mainline -- see [The Two Critical Fixes](#the-two-critical-fixes)).
+> **Codebase note**: Z-Image uses flow-matching losses internally (`_flow_matching_losses`) but `ModelType.Z_IMAGE.is_flow_matching()` returns `False` in the OneTrainer enum. This classification inconsistency affects which UI options are shown. On upstream mainline, MIN_SNR_GAMMA appears selectable but crashes at runtime with `NotImplementedError`. This repo includes the gesen2egee fix (see [The Two Critical Fixes](#the-two-critical-fixes)).
 
 ---
 
@@ -59,21 +61,30 @@ ZiB exhibits abnormal loss spikes at low timesteps (0-50) and high timesteps (95
 
 > **Note**: Some users question whether Min SNR Gamma makes theoretical sense for flow-matching architectures, since it was originally proposed for epsilon-prediction diffusion models [[2]](#sources). However, empirical results across multiple users confirm it dramatically improves training stability for ZiB. [[1]](#sources) [[3]](#sources)
 
-**Availability**: MIN_SNR_GAMMA exists in the mainline OneTrainer `LossWeight` enum, and the UI will show it as an option for Z-Image. However, **mainline's `_flow_matching_losses()` does NOT implement it** -- selecting it will crash with `NotImplementedError` at runtime. The [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) patches the flow-matching loss code to support MIN_SNR_GAMMA. **You must use the fork for this fix.**
+**Availability**: MIN_SNR_GAMMA exists in the upstream OneTrainer `LossWeight` enum, and the UI will show it as an option for Z-Image. However, **upstream mainline's `_flow_matching_losses()` does NOT implement it** -- selecting it will crash with `NotImplementedError` at runtime.
 
-What IS available on mainline without the fork:
+This repo includes the [gesen2egee](https://github.com/gesen2egee/OneTrainer) fix for MIN_SNR_GAMMA on flow matching models (cherry-picked from `4119608`). **If you are running upstream mainline, you must use the gesen2egee fork instead.**
+
+What is available in this repo (cherry-picked from gesen2egee):
+
+- `MIN_SNR_GAMMA`, `P2`, and `DEBIASED_ESTIMATION` loss weighting for flow matching models
+- `LoKR` PEFT type
+- Progressive timestep distribution
+- `NEG_SQUARE` timestep distribution
+- `random_noise_shift` and `random_noise_multiplier` noise augmentation
+
+What is available in upstream mainline (no fork needed):
 
 - `PRODIGY_ADV` optimizer with stochastic rounding
 - `FLOAT_32_STOCHASTIC` gradient reduce precision
 - `LOGIT_NORMAL` timestep distribution
 - Other `_adv` optimizer variants
 
-What requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer):
+What still requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) directly:
 
-- `MIN_SNR_GAMMA` loss weighting for Z-Image (flow-matching implementation)
 - `AUTOMAGIC_SINKGD` optimizer
-- `LoKR` PEFT type
 - `allora` and `use_kahan` optimizer parameters
+- MeanCache sampling acceleration
 
 #### 2. Precision Sensitivity → Stochastic Rounding
 
@@ -118,13 +129,13 @@ From u/FennelFetish on the OneTrainer GitHub Discussion #1281 [[5]](#sources). T
 
 Good likeness achieved at step ~2000 with 400 images. Works in ComfyUI with ZiT at LoRA strength 1.75.
 
-**Trade-off**: This approach lacks Min SNR Gamma (which requires the fork) and may be less consistent with smaller datasets (under 50 images). For small datasets, consider the fork-based Prodigy_ADV config below. [[6]](#sources) Some users report AdamW8bit also works acceptably with a cosine scheduler (not constant LR), though this is debated.
+**Trade-off**: This approach does not use Min SNR Gamma (which is available in this repo but not upstream mainline) and may be less consistent with smaller datasets (under 50 images). For small datasets, consider the Prodigy_ADV config below which uses MIN_SNR_GAMMA. [[6]](#sources) Some users report AdamW8bit also works acceptably with a cosine scheduler (not constant LR), though this is debated.
 
 ---
 
 ### Recommended Fork Config (Prodigy_ADV)
 
-**Requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer)** for MIN_SNR_GAMMA support.
+**Originally requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer)** for MIN_SNR_GAMMA support. This repo includes the cherry-picked fix, so this config works here. On upstream mainline, MIN_SNR_GAMMA will crash.
 
 This is the most widely tested and confirmed working configuration, from u/EribusYT [[2]](#sources). Multiple community members have verified it produces good character and style LoRAs.
 
@@ -141,7 +152,7 @@ This is the most widely tested and confirmed working configuration, from u/Eribu
 | **Scheduler** | CONSTANT | |
 | **Warmup steps** | 50 | |
 | **Stochastic rounding** | true | Critical for ZiB |
-| **Loss weight function** | MIN_SNR_GAMMA | **Fork only** -- crashes on mainline |
+| **Loss weight function** | MIN_SNR_GAMMA | Available here; crashes on upstream mainline |
 | **Loss weight strength** | 5.0 | |
 | **Epochs** | 120 | For 30-60 image datasets |
 | **Batch size** | 1 | |
@@ -178,10 +189,10 @@ Parameters available in mainline:
 | rms_rescaling | true | Yes |
 | weight_decay | 0.0 | Yes |
 | weight_decay_by_lr | true | Yes |
-| allora | true | **Fork only** |
-| use_kahan | true | **Fork only** |
+| allora | true | **gesen2egee fork only** |
+| use_kahan | true | **gesen2egee fork only** |
 
-If using mainline OneTrainer (without the fork), omit `allora` and `use_kahan`. These are ignored by mainline and only functional on the gesen2egee fork.
+`allora` and `use_kahan` are only functional on the gesen2egee fork. They are not included in this repo's cherry-picks and will be ignored on upstream mainline. The config still works without them — they are optimizations, not requirements.
 
 #### Text Encoder Settings
 
@@ -208,27 +219,27 @@ Z-Image has a **single** Qwen3 text encoder (not multiple like SD3 or HiDream):
 
 **Training time**: ~8 hours on an RTX 3090 with 40-80 images at 1024 resolution. [[2]](#sources)
 
-**Full config**: [pastebin.com/XCJmutM0](https://pastebin.com/XCJmutM0) -- Requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) for MIN_SNR_GAMMA, allora, and use_kahan. [[2]](#sources)
+**Full config**: [pastebin.com/XCJmutM0](https://pastebin.com/XCJmutM0) -- MIN_SNR_GAMMA works in this repo. `allora` and `use_kahan` require the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) but are optional. [[2]](#sources)
 
 ---
 
 ### Alternative Fork Config (automagic_sinkgd + LoKR)
 
-**Requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer)** for AUTOMAGIC_SINKGD, LoKR, and MIN_SNR_GAMMA.
+**Originally requires the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer)** for AUTOMAGIC_SINKGD, LoKR, and MIN_SNR_GAMMA. This repo includes cherry-picked LoKR and MIN_SNR_GAMMA support, but **AUTOMAGIC_SINKGD still requires the fork**.
 
 From u/Personal_Speed2326 [[1]](#sources), the original researcher who identified the Min SNR Gamma and precision fixes. This approach uses LoKR instead of LoRA and a custom optimizer.
 
 | Parameter | Value | Notes |
 | --- | --- | --- |
-| **PEFT type** | LoKR | Full rank LoKR (fork only) |
+| **PEFT type** | LoKR | Full rank LoKR (available here) |
 | **LoKR factor** | 8-12 | OP recommends 10 |
 | **LoKR rank** | Very high | Set extremely high for full rank |
-| **Optimizer** | AUTOMAGIC_SINKGD | Includes Kahan summation (fork only) |
+| **Optimizer** | AUTOMAGIC_SINKGD | Includes Kahan summation (**gesen2egee fork only**) |
 | **Learning rate** | 0.0003 | Like AdamW-scale LR |
 | **Scheduler** | REX or Cosine | With 100 warmup steps |
 | **Resolution** | 512 | Enables 12GB VRAM training |
 | **Epochs** | 100 | |
-| **Loss weight function** | MIN_SNR_GAMMA | Strength = 5 (fork only) |
+| **Loss weight function** | MIN_SNR_GAMMA | Strength = 5 (available here) |
 | **SVD Quant** | BF16, Rank 16 | Memory optimization |
 
 A user (u/RetroGazzaSpurs) [[1]](#sources) reported their best-ever ZiB LoRA with a variant:
@@ -358,7 +369,7 @@ Sample every 5 epochs (or every 250-500 steps). Look for:
 | Colors/contrast look washed out | Precision issue | Verify stochastic rounding is on; check transformer is BF16 not quantized |
 | Style but no character likeness | LoRA not learning identity | Increase rank; increase epochs; improve captions |
 | Good character but wrong style | Over-training | Reduce epochs; try a lower rank |
-| Loss oscillates wildly | Timestep instability | Enable Min SNR Gamma = 5 (fork); increase gradient accumulation |
+| Loss oscillates wildly | Timestep instability | Enable Min SNR Gamma = 5 (available here; fork or upstream will crash); increase gradient accumulation |
 | Loss flatlines early | Learning rate too low or optimizer stuck | For Prodigy, verify LR is 1.0; for others, try increasing LR |
 
 ### Parameter Tuning Priority
@@ -397,7 +408,7 @@ When adjusting between runs, change **one thing at a time** in this priority ord
 | --- | --- |
 | **24GB** | Use recommended config as-is |
 | **16GB** | Reduce resolution to 768 or 512; reduce batch size to 1; enable CPU offloading |
-| **12GB** | Use LoKR + automagic_sinkgd config at 512 (fork); SVD Quant BF16 rank 16; enable all offloading |
+| **12GB** | Use LoKR at 512 (available here) + automagic_sinkgd (fork only) or substitute another optimizer; SVD Quant BF16 rank 16; enable all offloading |
 | **8GB** | Very difficult. Try 512 resolution + maximum offloading. May not work |
 
 **Important**: The community recommends keeping the transformer at BFLOAT_16 for best quality [[1]](#sources) [[2]](#sources). The official OneTrainer presets use FLOAT_8 to fit in less VRAM -- this works but may reduce training quality. Reduce resolution or batch size before resorting to quantization.
@@ -423,7 +434,7 @@ Two different scenarios:
 
 ### "Loss spikes wildly during training"
 
-- Enable Min SNR Gamma = 5 (**requires [gesen2egee fork](https://github.com/gesen2egee/OneTrainer)** -- will crash on mainline)
+- Enable Min SNR Gamma = 5 (available in this repo; crashes on upstream mainline)
 - Increase gradient accumulation steps
 - Verify Logit Normal timestep distribution and `dynamic_timestep_shifting` are enabled
 
@@ -440,20 +451,22 @@ Two different scenarios:
 
 ### "RuntimeError: negative dimension with LoKR"
 
-- LoKR factor/rank combination is incompatible. Use factor 8-12 with a very high rank for full rank LoKR (fork only)
+- LoKR factor/rank combination is incompatible. Use factor 8-12 with a very high rank for full rank LoKR. LoKR is available in this repo (cherry-picked from gesen2egee).
 
 ### "NotImplementedError: Loss weight function MIN_SNR_GAMMA not implemented for flow matching models"
 
-- You are running mainline OneTrainer, which does not support MIN_SNR_GAMMA for Z-Image. Switch to the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer), or use the [Mainline-Compatible Config (Adafactor)](#mainline-compatible-config-adafactor) instead.
+- You are running upstream mainline OneTrainer, which does not support MIN_SNR_GAMMA for flow matching models. This repo includes the fix (cherry-picked from gesen2egee). If you see this error, you're likely on upstream mainline — switch to this repo, the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer), or use the [Mainline-Compatible Config (Adafactor)](#mainline-compatible-config-adafactor) instead.
 
 ### "8GB VRAM OOM even at 512"
 
 - The gesen2egee fork may be less VRAM-optimized than main OneTrainer
 - Try the main branch with Adafactor instead
 
-### "How do I verify I'm using the right fork?"
+### "How do I verify I have the fork features?"
 
-- Check the optimizer list. The gesen2egee fork has `automagic_sinkgd` as an option. If you see it, you're on the right fork.
+- If MIN_SNR_GAMMA doesn't crash on Z-Image training, the flow matching fix is present (this repo or gesen2egee fork).
+- If `LoKR` appears in the PEFT type dropdown, LoKR support is present.
+- If `automagic_sinkgd` appears in the optimizer list, you're on the full gesen2egee fork (not cherry-picked into this repo).
 
 ---
 
@@ -477,7 +490,8 @@ Numbered references cited throughout the guide with `[[N]]` notation.
 
 | Resource | Link |
 | --- | --- |
-| gesen2egee OneTrainer fork (MIN_SNR_GAMMA, AUTOMAGIC_SINKGD, LoKR) | [github.com/gesen2egee/OneTrainer](https://github.com/gesen2egee/OneTrainer) |
+| gesen2egee OneTrainer fork (authoritative source for all fork features) | [github.com/gesen2egee/OneTrainer](https://github.com/gesen2egee/OneTrainer) |
+| Cherry-pick details (what we took, what we didn't, why) | [docs/gesen2egee-fork-cherry-picks.md](gesen2egee-fork-cherry-picks.md) |
 | RedCraft ZiB Distill (for inference) | [civitai.com/models/958009](https://civitai.com/models/958009) |
 | ostris ZiT Training Adapter | [huggingface.co/ostris/zimage_turbo_training_adapter](https://huggingface.co/ostris/zimage_turbo_training_adapter) |
 | Z-Image-Turbo DistillPatch | [modelscope.cn/.../Z-Image-Turbo-DistillPatch](https://www.modelscope.cn/models/DiffSynth-Studio/Z-Image-Turbo-DistillPatch) |
@@ -490,4 +504,4 @@ Numbered references cited throughout the guide with `[[N]]` notation.
 
 ---
 
-*This guide reflects community knowledge as of February 2026. Z-Image tooling is evolving rapidly -- check the linked discussions and the main OneTrainer repo for updates.*
+*This guide reflects community knowledge as of February 2026. Z-Image tooling is evolving rapidly -- check the linked discussions and the [gesen2egee fork](https://github.com/gesen2egee/OneTrainer) for the latest features. Features cherry-picked into this repo may fall behind the fork over time.*
