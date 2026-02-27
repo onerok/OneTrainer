@@ -1,0 +1,24 @@
+{
+    "backup_after": 0,
+    "base_model_name": "segmind/tiny-sd",
+    "batch_size": 1,
+    "epochs": 1,
+    "layer_filter_preset": "attn-mlp",
+    "learning_rate": 0.0003,
+    "model_type": "STABLE_DIFFUSION_15",
+    "output_model_destination": "models/lora-test.safetensors",
+    "output_model_format": "SAFETENSORS",
+    "resolution": "256",
+    "concept_file_name": "test_dataset/concepts.json",
+    "sample_after": 0,
+    "training_method": "LORA",
+    "vae": {
+        "weight_dtype": "FLOAT_32"
+    },
+    "unet": {
+        "weight_dtype": "FLOAT_16"
+    },
+    "text_encoder": {
+        "weight_dtype": "FLOAT_16"
+    }
+}
